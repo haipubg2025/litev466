@@ -97,47 +97,28 @@ async function startServer() {
   // Helper function to format AI error messages nicely (specifically 429 Quota limits and 524 Proxy timeouts)
   function formatAiErrorMessage(error: any): string {
     const errMsg = typeof error === 'string' ? error : (error?.message || JSON.stringify(error));
-    
-    if (errMsg.includes("<!DOCTYPE") || errMsg.includes("<html") || errMsg.includes("cf-error") || errMsg.includes("Cloudflare")) {
-      if (errMsg.includes("524") || errMsg.includes("Error code 524")) {
-        return "Lỗi thời gian chờ Proxy (Cloudflare 524 Timeout): Máy chủ Proxy phản hồi quá chậm hoặc bị ngắt kết nối (chờ quá 100s). Vui lòng thử đổi sang mô hình nhanh hơn (như Gemini Flash) hoặc kiểm tra lại địa chỉ/máy chủ Proxy.";
-      }
-      if (errMsg.includes("502") || errMsg.includes("503") || errMsg.includes("504")) {
-        return "Lỗi kết nối máy chủ Proxy (Gateway Error): Máy chủ Proxy hiện tại đang bị quá tải hoặc ngưng hoạt động. Vui lòng kiểm tra lại Cài đặt Proxy.";
-      }
-      return "Lỗi kết nối máy chủ Proxy/API: Máy chủ trả về trang lỗi HTML thay vì dữ liệu AI. Vui lòng kiểm tra lại cấu hình Proxy hoặc API Key.";
-    }
-
     const lower = errMsg.toLowerCase();
     
-    if (lower.includes("524") || lower.includes("gateway timeout") || lower.includes("error code 524") || lower.includes("proxy error: 524")) {
-      return "Lỗi thời gian chờ Proxy (Cloudflare 524 Timeout): Máy chủ Proxy phản hồi quá chậm (chờ quá 100 giây). Vui lòng đổi sang mô hình Flash nhẹ hơn hoặc chọn nguồn Proxy khác.";
-    }
-
-    if (lower.includes("terminated") || lower.includes("und_err") || lower.includes("fetch failed")) {
-      return "Lỗi kết nối Proxy/API: Kết nối bị đóng đột ngột (terminated). Proxy hoặc máy chủ có thể đã quá tải, vui lòng thử lại sau.";
+    // Báo lỗi chính xác về Token Limits (vượt mức Token)
+    if (lower.includes("input_token_count") || lower.includes("tokens per minute") || lower.includes("tpm") || lower.includes("token limits")) {
+      return "Lỗi API: Bạn đã vượt quá giới hạn Token (số lượng ký tự) cho phép của API Key trong 1 phút. Cụ thể: Vượt mức 250.000 input tokens.\n👉 Mẹo: Hãy chat chậm lại, ấn dọn dẹp lịch sử chat, hoặc nâng cấp thanh toán API Key để gỡ bỏ giới hạn này.";
     }
     
-    if (
-      lower.includes("resource_exhausted") || 
-      lower.includes("429") || 
-      lower.includes("quota exceeded") ||
-      lower.includes("quota") ||
-      lower.includes("rate limit") ||
-      lower.includes("too many requests")
-    ) {
-      return "Hạn ngạch thử nghiệm của mô hình hiện tại đã hết! Bạn hãy vào mục Cài đặt -> tab Chung để đổi sang dòng Flash (như 'gemini-3.5-flash' hoặc 'gemini-3.1-flash-lite') để cuộc chơi không bị gián đoạn nhé.";
+    // Báo lỗi chính xác về Rate Limits (số lượng Yêu cầu/phút)
+    if (lower.includes("requests per minute") || lower.includes("rpm") || lower.includes("rate limit")) {
+      return "Lỗi API: Bạn đã gửi quá nhiều yêu cầu trong 1 phút (Vượt giới hạn RPM của API Key).\n👉 Mẹo: Vui lòng chat chậm lại.";
+    }
+
+    // Lỗi 429 Quota Exceeded chung
+    if (lower.includes("quota exceeded") || lower.includes("429") || lower.includes("resource_exhausted")) {
+      return "Lỗi API: Hạn ngạch của API Key đã cạn kiệt (429 Quota Exceeded).";
     }
     
     if (lower.includes("api key") || lower.includes("api_key") || lower.includes("key not found") || lower.includes("invalid key")) {
-      return "API Key của bạn không hợp lệ hoặc thiếu. Vui lòng mở Cài đặt -> tab Chung để cập nhật.";
+      return "Lỗi API: API Key của bạn không hợp lệ hoặc thiếu. Vui lòng cập nhật trong phần Cài đặt.";
     }
 
-    if (errMsg.includes("ApiError:") || errMsg.includes("throwErrorIfNotOK") || errMsg.includes("{\n") || errMsg.includes("error\":{")) {
-      return "Lỗi kết nối máy chủ AI gặp sự cố hoặc hết tài nguyên. Vui lòng đổi mô hình hoặc thử lại sau vài giây.";
-    }
-
-    return errMsg;
+    return "[Chi tiết lỗi gốc từ server AI]: " + errMsg;
   }
 
   // API route for generating content with stream
@@ -145,11 +126,11 @@ async function startServer() {
     try {
       const { prompt, schema, activeProxy, providedApiKey, systemInstruction, temperature, topP, topK, selectedAIModel, imagesBase64 } = req.body;
 
-      let model = selectedAIModel || "gemini-3.1-pro-preview";
+      let model = selectedAIModel || "gemini-3.6-flash";
       let aiClient: GoogleGenAI;
 
       if (activeProxy && activeProxy.url && activeProxy.key) {
-        model = activeProxy.selectedModel || "gemini-3.1-pro-preview";
+        model = activeProxy.selectedModel || "";
         aiClient = new GoogleGenAI({ 
           apiKey: activeProxy.key, 
           httpOptions: { baseUrl: activeProxy.url, timeout: 600000 }
@@ -163,7 +144,7 @@ async function startServer() {
         }
         aiClient = new GoogleGenAI({ 
           apiKey,
-          httpOptions: { timeout: 600000 } // Tăng giới hạn timeout lên 10 phút
+          httpOptions: { headers: { 'User-Agent': 'aistudio-build' }, timeout: 600000 } // Tăng giới hạn timeout lên 10 phút
         });
         console.log(`[API Key enabled] Using standard API Key`);
       }
@@ -213,7 +194,12 @@ async function startServer() {
       }
 
     } catch (error: any) {
-      console.error("Lỗi tạo nội dung từ AI:", error);
+      const errMsg = error.message || String(error);
+      if (errMsg.includes("429") || errMsg.includes("404") || errMsg.includes("403") || errMsg.includes("Quota")) {
+        console.warn("[AI Server] Yêu cầu bị từ chối bởi API (Quota/Auth/Not Found)");
+      } else {
+        console.error("Lỗi tạo nội dung từ AI:", error);
+      }
       const friendlyError = formatAiErrorMessage(error);
       res.write(`event: error\ndata: ${JSON.stringify({ error: friendlyError })}\n\n`);
       res.end();
@@ -344,7 +330,7 @@ async function startServer() {
              method: 'POST',
              headers,
              body: JSON.stringify(reqBody),
-             signal: AbortSignal.timeout(600000)
+             // signal: AbortSignal.timeout(600000) removed
            });
            
            if (!proxyStreamRes.ok) {
@@ -525,9 +511,7 @@ async function startServer() {
               }
            }
         } catch (err: any) {
-           console.error("Lỗi Bộ giải mã Proxy:", err);
-           const friendlyError = formatAiErrorMessage(err);
-           res.write(`event: error\ndata: ${JSON.stringify({ error: friendlyError })}\n\n`);
+           throw err;
         }
   }
 
@@ -540,14 +524,7 @@ async function startServer() {
             temperature: typeof temperature === 'number' ? temperature : 0.7,
             topP: typeof topP === 'number' ? topP : 0.95,
             topK: typeof topK === 'number' ? topK : 40,
-            systemInstruction: sysInstruction,
-            safetySettings: [
-              { category: HarmCategory.HARM_CATEGORY_HATE_SPEECH, threshold: HarmBlockThreshold.BLOCK_NONE },
-              { category: HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT, threshold: HarmBlockThreshold.BLOCK_NONE },
-              { category: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT, threshold: HarmBlockThreshold.BLOCK_NONE },
-              { category: HarmCategory.HARM_CATEGORY_HARASSMENT, threshold: HarmBlockThreshold.BLOCK_NONE },
-              { category: HarmCategory.HARM_CATEGORY_CIVIC_INTEGRITY, threshold: HarmBlockThreshold.BLOCK_NONE }
-            ]
+            systemInstruction: sysInstruction
           };
 
           if (isProModel) {
@@ -594,51 +571,42 @@ async function startServer() {
               contentsToPass = geminiParts;
           }
 
-          const responseStream = await aiClient.models.generateContentStream({
+          const response = await aiClient.models.generateContent({
             model,
             contents: contentsToPass,
             config
           });
 
-          for await (const chunk of responseStream as any) {
-            let thoughtPart = "";
-            let textPart = "";
-            let chunkThoughtSafe = "";
-            let chunkTextSafe = "";
-            
-            try { chunkThoughtSafe = chunk.thought || ""; } catch(e){}
-            try { chunkTextSafe = chunk.text || ""; } catch(e){}
-            
-            if (chunk.candidates && chunk.candidates.length > 0) {
-              const candidate = chunk.candidates[0];
-              if (candidate.finishReason && candidate.finishReason !== "STOP") {
-                 console.log(`[Stream End] finishReason: ${candidate.finishReason}`);
-                 if (candidate.finishReason === "SAFETY" || candidate.finishReason === "BLOCKLIST" || candidate.finishReason === "RECITATION") {
-                    throw new Error(`SAFETY: Nội dung bị chặn bởi hệ thống an toàn của Google (FinishReason: ${candidate.finishReason}).`);
-                 }
-              }
-              if (candidate.content?.parts) {
-                for (const part of candidate.content.parts) {
-                  if ('thought' in part && part.thought) {
-                    thoughtPart += (typeof part.thought === 'string') ? part.thought : (part.text || "");
-                  } else if (part.text) {
-                    textPart += part.text;
-                  }
+          let thoughtPart = "";
+          let textPart = "";
+          
+          if (response.candidates && response.candidates.length > 0) {
+            const candidate = response.candidates[0];
+            if (candidate.finishReason && candidate.finishReason !== "STOP") {
+               console.log(`[Response End] finishReason: ${candidate.finishReason}`);
+               if (candidate.finishReason === "SAFETY" || candidate.finishReason === "BLOCKLIST" || candidate.finishReason === "RECITATION") {
+                  throw new Error(`SAFETY: Nội dung bị chặn bởi hệ thống an toàn của Google (FinishReason: ${candidate.finishReason}).`);
+               }
+            }
+            if (candidate.content?.parts) {
+              for (const part of candidate.content.parts) {
+                if ('thought' in part && part.thought) {
+                  thoughtPart += (typeof part.thought === 'string') ? part.thought : (part.text || "");
+                } else if (part.text) {
+                  textPart += part.text;
                 }
               }
             }
-            
-            const payload = JSON.stringify({
-              thought: thoughtPart || chunkThoughtSafe,
-              text: textPart || chunkTextSafe,
-              usage: chunk.usageMetadata || null
-            });
-            res.write(`data: ${payload}\n\n`);
           }
+          
+          const payload = JSON.stringify({
+            thought: thoughtPart,
+            text: textPart,
+            usage: response.usageMetadata || null
+          });
+          res.write(`data: ${payload}\n\n`);
         } catch (err: any) {
-          console.error("Lỗi Bộ giải mã API Key:", err);
-          const friendlyError = formatAiErrorMessage(err);
-          res.write(`event: error\ndata: ${JSON.stringify({ error: friendlyError })}\n\n`);
+          throw err;
         }
   }
 

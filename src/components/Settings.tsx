@@ -680,28 +680,36 @@ export default function Settings() {
                       </button>
                     </div>
 
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between p-4 rounded-2xl theme-input border-transparent gap-4">
-                      <div>
-                        <p className={`font-bold ${currentTheme.textPrimary}`}>Mô hình AI chính</p>
-                        <p className={`text-sm ${currentTheme.textSecondary}`}>Thay đổi khi gặp lỗi 429 Hết hạn ngạch / Quota Limits</p>
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between p-4 rounded-2xl theme-input border-transparent gap-4 relative overflow-hidden">
+                      <div className="absolute inset-0 bg-black/5 dark:bg-white/5 backdrop-blur-[1.5px] z-10 flex items-center justify-center">
+                         <span className="text-xs font-bold text-red-500 bg-red-500/10 px-3 py-1 rounded-full text-center">Tạm khóa do giới hạn API Key Free</span>
                       </div>
-                      <select 
-                        value={selectedAIModel}
-                        onChange={(e) => {
-                          setSelectedAIModel(e.target.value);
-                          toast.success(`Đã chọn mô hình: ${e.target.value}`);
-                        }}
-                        className="theme-input border-transparent rounded-xl px-4 py-2 theme-text-base outline-none focus:border-blue-500 min-w-[200px] text-sm"
-                        >
-                        {Array.from(new Set([
-                          "gemini-3.6-flash",
-                          "gemini-3.5-flash",
-                          "gemini-3.1-pro-preview",
-                          ...(proxies.flatMap(p => p.models || []))
-                        ])).map(model => (
-                          <option key={model} value={model}>{model}</option>
-                        ))}
-                      </select>
+                      <div className="opacity-40 pointer-events-none w-full flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                        <div>
+                          <p className={`font-bold ${currentTheme.textPrimary}`}>Mô hình AI chính</p>
+                          <p className={`text-sm ${currentTheme.textSecondary}`}>Thay đổi khi gặp lỗi 429 Hết hạn ngạch / Quota Limits</p>
+                        </div>
+                        <select 
+                          value={selectedAIModel}
+                          onChange={(e) => {
+                            setSelectedAIModel(e.target.value);
+                            toast.success(`Đã chọn mô hình: ${e.target.value}`);
+                          }}
+                          className="theme-input border-transparent rounded-xl px-4 py-2 theme-text-base outline-none focus:border-blue-500 min-w-[200px] text-sm"
+                          disabled
+                          >
+                          {Array.from(new Set([
+                            "gemini-3.7-flash",
+                            "gemini-2.5-flash",
+                            "gemini-2.5-pro",
+                            "gemini-3.6-flash",
+                            "gemini-3.5-flash",
+                            ...(proxies.flatMap(p => p.models || []))
+                          ])).map(model => (
+                            <option key={model} value={model}>{model}</option>
+                          ))}
+                        </select>
+                      </div>
                     </div>
 
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between p-4 rounded-2xl theme-input border-transparent gap-4">
@@ -1004,7 +1012,12 @@ export default function Settings() {
 
                 <div className="grid grid-cols-1 xl:grid-cols-2 gap-12 text-left">
                   {/* Cột 1: Api Key Cá Nhân */}
-                  <section className="space-y-8">
+                  <section className="space-y-8 relative">
+                  <div className="absolute inset-0 bg-black/5 dark:bg-white/5 backdrop-blur-[2px] z-20 flex flex-col items-center justify-center rounded-3xl p-6 text-center shadow-[inset_0_0_20px_rgba(0,0,0,0.1)]">
+                     <span className="text-sm font-bold text-red-500 bg-red-500/10 px-4 py-2 rounded-full mb-3 border border-red-500/20">🔒 Tạm khóa API Key Cá Nhân</span>
+                     <span className={`text-xs ${currentTheme.textSecondary} leading-relaxed max-w-sm`}>Chức năng bị khóa do API Key Free Tier của Google chỉ cho phép <b>250.000 tokens/phút</b>. Lượng ngữ cảnh của game quá lớn sẽ lập tức gây lỗi 429. Vui lòng dùng Proxy mặc định.</span>
+                  </div>
+                  <div className="opacity-30 pointer-events-none space-y-8">
                   <div className="px-4">
                     <h3 className={`text-2xl font-bold ${currentTheme.textPrimary}`}>Api Key Cá Nhân</h3>
                     <p className={`text-sm mt-1 ${currentTheme.textSecondary}`}>Thiết lập Gemini API Key của riêng bạn</p>
@@ -1077,6 +1090,7 @@ export default function Settings() {
                         * Ghi chú: Hệ thống sẽ tự động xoay vòng (round-robin) các Key trong danh sách. Nếu có Key bị lỗi sẽ tạm thời đưa vào danh sách đen.
                       </p>
                     </div>
+                  </div>
                   </div>
                 </section>
 

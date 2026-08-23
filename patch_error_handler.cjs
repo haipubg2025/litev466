@@ -1,3 +1,6 @@
+const fs = require('fs');
+
+const code = `
 export function cleanErrorMessage(msg: string): string {
   if (!msg) return "";
   
@@ -33,13 +36,13 @@ export function formatErrorMessage(error: any): { type: string; message: string;
   const cleanedMsg = cleanErrorMessage(rawMsg);
   
   // Extract error code (3-digit HTTP status code) or inner code
-  const errorCodeMatch = rawMsg.match(/\b(40[0-9]|4[1-9][0-9]|50[0-9]|5[1-9][0-9])\b/);
+  const errorCodeMatch = rawMsg.match(/\\b(40[0-9]|4[1-9][0-9]|50[0-9]|5[1-9][0-9])\\b/);
   const foundCode = errorCodeMatch ? errorCodeMatch[1] : error?.status ? String(error.status) : "";
-  const errorCodeStr = foundCode ? ` [Code: ${foundCode}]` : "";
+  const errorCodeStr = foundCode ? \` [Code: \${foundCode}]\` : "";
 
   if (cleanedMsg.includes("Lỗi API:")) {
      return {
-        type: `Lỗi Máy Chủ AI (Google API)${errorCodeStr}`,
+        type: \`Lỗi Máy Chủ AI (Google API)\${errorCodeStr}\`,
         message: cleanedMsg,
         solution: "- Làm theo hướng dẫn ở phần tin nhắn lỗi phía trên."
      };
@@ -47,7 +50,7 @@ export function formatErrorMessage(error: any): { type: string; message: string;
   
   if (cleanedMsg.includes("[Chi tiết lỗi gốc từ server AI]:")) {
      return {
-        type: `Chi tiết lỗi gốc từ server AI${errorCodeStr}`,
+        type: \`Chi tiết lỗi gốc từ server AI\${errorCodeStr}\`,
         message: cleanedMsg,
         solution: "- Đọc chi tiết lỗi từ máy chủ trả về ở trên."
      };
@@ -56,32 +59,32 @@ export function formatErrorMessage(error: any): { type: string; message: string;
   const errStr = rawMsg.toLowerCase();
   if (errStr.includes("safety") || errStr.includes("block_reason") || errStr.includes("finishreason: safety")) {
     return {
-      type: `Lỗi Cảnh Cáo An Toàn (Safety Filter)${errorCodeStr}`,
+      type: \`Lỗi Cảnh Cáo An Toàn (Safety Filter)\${errorCodeStr}\`,
       message: cleanedMsg,
-      solution: "- Văn cảnh hiện tại chứa nhiều yếu tố nhạy cảm (NSFW, bạo lực kịch liệt, ...).\n- Hãy thử diễn đạt lời nói giảm nhẹ hơn, tránh từ ngữ trực tiếp bị Google cấm.\n- Kiểm tra thiết lập màng lọc an toàn API nếu có mã code riêng."
+      solution: "- Văn cảnh hiện tại chứa nhiều yếu tố nhạy cảm (NSFW, bạo lực kịch liệt, ...).\\n- Hãy thử diễn đạt lời nói giảm nhẹ hơn, tránh từ ngữ trực tiếp bị Google cấm.\\n- Kiểm tra thiết lập màng lọc an toàn API nếu có mã code riêng."
     };
   }
 
   if (errStr.includes("fetch") || errStr.includes("network") || errStr.includes("internet") || errStr.includes("failed to fetch")) {
     return {
-      type: `Lỗi Mạng (Network/Internet)${errorCodeStr}`,
+      type: \`Lỗi Mạng (Network/Internet)\${errorCodeStr}\`,
       message: cleanedMsg,
-      solution: "- Kiểm tra mạng máy tính (Wifi/LAN) hoặc tường lửa trình duyệt đang chặn.\n- Extension dạng Ad-blocker đôi lúc chặn kết nối ra ngoài, hãy tạm tắt chặn quảng cáo.\n- Nhấn F5 tải lại tab."
+      solution: "- Kiểm tra mạng máy tính (Wifi/LAN) hoặc tường lửa trình duyệt đang chặn.\\n- Extension dạng Ad-blocker đôi lúc chặn kết nối ra ngoài, hãy tạm tắt chặn quảng cáo.\\n- Nhấn F5 tải lại tab."
     };
   }
 
   if (errStr.includes("json") || errStr.includes("parse") || errStr.includes("end of json") || errStr.includes("expected ','")) {
     return {
-      type: `Lỗi Giải Mã JSON (Parsing)${errorCodeStr}`,
+      type: \`Lỗi Giải Mã JSON (Parsing)\${errorCodeStr}\`,
       message: cleanedMsg,
-      solution: "- AI tạo ra định dạng câu chữ bị nát, thiếu móc ngoặc nên hệ thống không đọc được.\n- Thử nhấn tạo tiếp (Retry) để AI suy nghĩ logic tạo lại cấu trúc mới nguyên vẹn."
+      solution: "- AI tạo ra định dạng câu chữ bị nát, thiếu móc ngoặc nên hệ thống không đọc được.\\n- Thử nhấn tạo tiếp (Retry) để AI suy nghĩ logic tạo lại cấu trúc mới nguyên vẹn."
     };
   }
   
   return {
-    type: `Lỗi Hệ Thống Lạ (Unknown Exception)${errorCodeStr}`,
+    type: \`Lỗi Hệ Thống Lạ (Unknown Exception)\${errorCodeStr}\`,
     message: cleanedMsg,
-    solution: "- Có lỗi ngầm định lạ nào đó chưa rõ, chụp màn hình gửi Dev fix giùm nha.\n- Nhanh nhất là F5 trình duyệt để reset luồng."
+    solution: "- Có lỗi ngầm định lạ nào đó chưa rõ, chụp màn hình gửi Dev fix giùm nha.\\n- Nhanh nhất là F5 trình duyệt để reset luồng."
   };
 }
 
@@ -89,7 +92,7 @@ export function generateSysLog(error: any): { message: string, type: 'error' } {
   const formatted = formatErrorMessage(error);
   const timeStr = new Date().toLocaleTimeString('vi-VN', { hour12: false });
   return {
-    message: `[${timeStr}] 🔴 LOẠI LỖI: ${formatted.type}\n📌 MÔ TẢ: ${formatted.message}\n💡 CÁCH KHẮC PHỤC: \n${formatted.solution}\n----------------------------------------\n`,
+    message: \`[\${timeStr}] 🔴 LOẠI LỖI: \${formatted.type}\\n📌 MÔ TẢ: \${formatted.message}\\n💡 CÁCH KHẮC PHỤC: \\n\${formatted.solution}\\n----------------------------------------\\n\`,
     type: 'error'
   };
 }
@@ -107,3 +110,6 @@ export function normalizeUsage(u: any) {
     totalTokenCount
   };
 }
+\`;
+
+fs.writeFileSync('src/utils/errorHandler.ts', code);

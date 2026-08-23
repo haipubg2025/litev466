@@ -217,8 +217,8 @@ class AIService {
       const providedApiKey = this.getNextPersonalKey();
       const isUsingProxy = !!activeProxy;
       const model = isUsingProxy 
-        ? (activeProxy.selectedModel || "gemini-3.1-pro-preview")
-        : (state.selectedAIModel || "gemini-3.1-pro-preview");
+        ? (activeProxy.selectedModel || "")
+        : (state.selectedAIModel || "gemini-3.7-flash");
 
       let accumulatedText = "";
       let accumulatedThought = "";
@@ -366,19 +366,24 @@ HƯỚNG DẪN ÁP DỤNG THÔNG SỐ:
       try {
         // 1. THỬ GỌI BACKEND TRUYỀN THỐNG (Khuyên dùng khi chạy trên AI Studio/máy chủ thật)
         const fetchUrl = '/api/generate-stream';
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 600000);
         const headers: Record<string, string> = { 'Content-Type': 'application/json' };
         const bodyPayload: any = {
           prompt: resolvedPrompt, schema, activeProxy, providedApiKey: currentApiKey,
           systemInstruction: combinedSystemInstruction, temperature, topP, topK, imagesBase64,
-          selectedAIModel: isUsingProxy ? (activeProxy.selectedModel || "gemini-3.1-pro-preview") : state.selectedAIModel
+          selectedAIModel: isUsingProxy ? (activeProxy.selectedModel || "") : state.selectedAIModel
         };
 
         const response = await fetch(fetchUrl, {
           method: 'POST',
           headers,
           body: JSON.stringify(bodyPayload),
-          signal: AbortSignal.timeout(600000) // Khắc phục tự ngắt kết nối: nâng thời hạn chờ lên 10 phút
+          // signal được thiết lập qua AbortController
+          signal: controller.signal
         });
+
+        clearTimeout(timeoutId);
 
         // Nếu gặp lỗi 404, tức là website được deploy tĩnh (Netlify, GitHub Pages...) không có server Node.js chạy ngầm!
         if (response.status === 404) {
@@ -419,12 +424,16 @@ HƯỚNG DẪN ÁP DỤNG THÔNG SỐ:
               const dataStr = chunkText.slice(6).trim();
               if (dataStr === "[DONE]") {
                 if (!hasReceivedText) {
-                  throw new Error("Lỗi kết nối: Máy chủ AI đã dừng phản hồi mà không trả về dữ liệu. Thời gian xử lý có thể đã vượt quá giới hạn Timeout của hệ thống hoặc lỗi gián đoạn từ phía API.");
+                  console.warn("[AI Service] Máy chủ AI đã gửi tín hiệu [DONE] nhưng không có text nào được nhận.");
+                  // We don't throw an error here anymore, just let it return normally. The UI will handle empty responses.
                 }
                 return;
               }
               try {
                 const parsed = JSON.parse(dataStr);
+                if (parsed.error) {
+                  throw new Error(parsed.error);
+                }
                 if (parsed.text && parsed.text.trim().length > 0) hasReceivedText = true;
                 yield {
                   thought: parsed.thought || "",
@@ -432,18 +441,13 @@ HƯỚNG DẪN ÁP DỤNG THÔNG SỐ:
                   usage: parsed.usage || null
                 };
               } catch (e) {
-                // Bỏ qua lỗi parse lỗi nhỏ của proxy
+                if (e && e.message && !e.message.includes("JSON")) {
+                  throw e;
+                }
               }
             } else if (chunkText.startsWith("event: error")) {
-              let errorMsg = "Có lỗi báo về từ server API (Mô hình không tồn tại, API bị chặn hoặc hết hạn ngạch).";
-              if (buffer.includes("data: ")) {
-                try {
-                  const errJsonStr = buffer.split("data: ")[1].split("\n")[0].trim();
-                  const errJson = JSON.parse(errJsonStr);
-                  if (errJson.error) errorMsg = errJson.error;
-                } catch(e){}
-              }
-              throw new Error(errorMsg);
+              // Just skip the event line, the next line will be data: {"error": ...}
+              continue;
             }
           }
         }
@@ -465,7 +469,7 @@ HƯỚNG DẪN ÁP DỤNG THÔNG SỐ:
         }
 
         if (!hasReceivedText) {
-          throw new Error("Lỗi hệ thống: Quá trình tạo luồng bị ngắt giữa chừng do Timeout (chờ quá 50 giây mà AI chưa kịp trả về tín hiệu văn bản) hoặc kết nối API bị cản trở.");
+          console.warn("[AI Service] Quá trình tạo luồng kết thúc nhưng không nhận được text.");
         }
         
         return; // Thành công thì kết thúc hàm
@@ -521,8 +525,8 @@ HƯỚNG DẪN ÁP DỤNG THÔNG SỐ:
     const state = useStore.getState();
     const isUsingProxy = !!activeProxy;
     const model = isUsingProxy 
-      ? (activeProxy.selectedModel || "gemini-3.1-pro-preview")
-      : (state.selectedAIModel || "gemini-3.1-pro-preview");
+      ? (activeProxy.selectedModel || "")
+      : (state.selectedAIModel || "gemini-3.7-flash");
 
     // LẤY CẤU HÌNH SILLYTAVERN ĐỂ ĐÈ ĐỘ DÀI TỐI ĐA
     const stConfig = getActiveSillyTavernConfig();
@@ -656,8 +660,7 @@ HƯỚNG DẪN ÁP DỤNG THÔNG SỐ:
     } else {
       // GỌI TRỰC TIẾP LÊN MÁY CHỦ GOOGLE GEMINI TỪ CLIENT
       const apiKey = providedApiKey!;
-      targetUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:streamGenerateContent?key=${apiKey}&alt=sse`;
-
+      targetUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
       reqBody = {
         contents: [{ role: "user", parts: geminiParts }],
         generationConfig: {
@@ -665,13 +668,7 @@ HƯỚNG DẪN ÁP DỤNG THÔNG SỐ:
           topP: typeof topP === 'number' ? topP : 0.95,
           topK: typeof topK === 'number' ? topK : 40,
           maxOutputTokens: maxLength,
-        },
-        safetySettings: [
-          { category: "HARM_CATEGORY_HATE_SPEECH", threshold: "BLOCK_NONE" },
-          { category: "HARM_CATEGORY_SEXUALLY_EXPLICIT", threshold: "BLOCK_NONE" },
-          { category: "HARM_CATEGORY_DANGEROUS_CONTENT", threshold: "BLOCK_NONE" },
-          { category: "HARM_CATEGORY_HARASSMENT", threshold: "BLOCK_NONE" }
-        ]
+        }
       };
       if (schema) {
         reqBody.generationConfig.responseMimeType = "application/json";
@@ -708,6 +705,29 @@ HƯỚNG DẪN ÁP DỤNG THÔNG SỐ:
         errMsg = `[Key: *${providedApiKey.slice(-4)}] ` + errMsg;
       }
       throw new Error(errMsg);
+    }
+
+    if (!isUsingProxy) {
+      const jsonResponse = await response.json();
+      let textPart = "";
+      let thoughtPart = "";
+      let usage = jsonResponse.usageMetadata || null;
+
+      if (jsonResponse.candidates && jsonResponse.candidates.length > 0) {
+        const candidate = jsonResponse.candidates[0];
+        if (candidate.finishReason && candidate.finishReason !== "STOP") {
+            throw new Error(`SAFETY: Nội dung bị chặn bởi hệ thống an toàn của Google (FinishReason: ${candidate.finishReason}).`);
+        }
+        if (candidate.content && candidate.content.parts) {
+          candidate.content.parts.forEach((p: any) => {
+            if (p.text) textPart += p.text;
+            if (p.thought) thoughtPart += p.thought;
+          });
+        }
+      }
+      
+      yield { thought: thoughtPart, text: textPart, usage };
+      return;
     }
 
     if (!response.body) {

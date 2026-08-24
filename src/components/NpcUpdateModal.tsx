@@ -308,7 +308,7 @@ function DataEditor({ data, originalData, compareData, isDark, onChange, readonl
         <div 
           className={`text-sm whitespace-pre-wrap p-2 rounded ${isDark ? 'bg-black/20 text-white/80 border border-white/5' : 'bg-black/5 border border-black/10 text-slate-800'}`}
         >
-          {data !== null && data !== undefined ? stripHtmlTags(String(data)) : ''}
+          {data !== null && data !== undefined ? stripHtmlTags(data) : ''}
         </div>
       );
     } else {
@@ -808,7 +808,7 @@ export default function NpcUpdateModal({ npc, npcIndex, onClose, onApply }: NpcU
                       ) : (
                         <div className="flex flex-col gap-2 w-full">
                           <AutoResizeTextarea 
-                            value={pending[key] !== undefined && pending[key] !== null ? String(pending[key]) : ''}
+                            value={pending[key] !== undefined && pending[key] !== null ? (typeof pending[key] === 'object' ? JSON.stringify(pending[key], null, 2) : String(pending[key])) : ''}
                             onChange={(e) => handleChange(key, e.target.value)}
                             className={`w-full min-h-[120px] text-sm outline-none bg-transparent whitespace-pre-wrap leading-relaxed ${isDark ? 'text-white' : 'text-slate-700 bg-white border border-green-200 p-3 rounded-lg shadow-inner'}`}
                           />

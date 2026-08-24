@@ -233,6 +233,10 @@ export function filterSensitiveWords(text: string, worldTags: string[] = []): st
     sanitized = sanitized.replace(/^\s*,\s*/g, "");
     sanitized = sanitized.replace(/,\s*$/g, "");
 
+        // Hotfix cho lỗi "m thanh" thay vì "Âm thanh"
+    sanitized = sanitized.replace(/(^|[\s\.:;?!,])m thanh\b/g, "$1Âm thanh");
+    sanitized = sanitized.replace(/(^|[\s\.:;?!,])M thanh\b/g, "$1Âm thanh");
+    
     return sanitized.trim();
   });
 

@@ -342,7 +342,7 @@ function EditableArrayField({
                 >
                   {typeof item.description === "string"
                     ? stripHtmlTags(item.description)
-                    : stripHtmlTags(String(item.description))}
+                    : stripHtmlTags(item.description)}
                 </p>
               )}
             </div>
@@ -833,7 +833,7 @@ function EditableRelationshipArrayField({
                     <MessageSquareQuote size={12} /> Ấn tượng & Suy nghĩ:
                   </span>
                   <p className="whitespace-pre-wrap font-sans">
-                    {typeof item.impression === "string" ? stripHtmlTags(item.impression) : stripHtmlTags(String(item.impression))}
+                    {typeof item.impression === "string" ? stripHtmlTags(item.impression) : stripHtmlTags(item.impression)}
                   </p>
                 </div>
               )}
@@ -882,7 +882,7 @@ function EditableRelationshipArrayField({
                 >
                   {typeof item.description === "string"
                     ? stripHtmlTags(item.description)
-                    : stripHtmlTags(String(item.description))}
+                    : stripHtmlTags(item.description)}
                 </p>
               )}
             </div>
@@ -2437,7 +2437,7 @@ LƯU Ý:
                                 {editedData.impression ? (
                                   typeof editedData.impression === "string"
                                     ? stripHtmlTags(editedData.impression)
-                                    : stripHtmlTags(String(editedData.impression))
+                                    : stripHtmlTags(editedData.impression)
                                 ) : (
                                   <span className="italic opacity-40 font-normal">
                                     Chưa có ghi nhận ấn tượng & suy nghĩ tổng quan.

@@ -101,7 +101,8 @@ export function sanitizeAndFixInlineHtml(text: string): string {
   return fixInlineSpanCapitalization(result);
 }
 
-export function stripHtmlTags(text: string): string {
+export function stripHtmlTags(text: any): string {
+  if (typeof text === "object" && text !== null) return JSON.stringify(text, null, 2);
   if (!text) return "";
   return text.replace(/<br\s*\/?>/gi, "\n").replace(/<[^>]+>/g, "");
 }

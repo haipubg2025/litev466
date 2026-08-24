@@ -102,8 +102,8 @@ function diffWords(oldStr: string, newStr: string): { value: string; added?: boo
 }
 
 function DiffPreview({ oldVal, newVal, isDark }: { oldVal: any; newVal: any; isDark: boolean }) {
-  const s1 = oldVal !== undefined && oldVal !== null ? stripHtmlTags(String(oldVal)) : '';
-  const s2 = newVal !== undefined && newVal !== null ? stripHtmlTags(String(newVal)) : '';
+  const s1 = oldVal !== undefined && oldVal !== null ? stripHtmlTags(oldVal) : '';
+  const s2 = newVal !== undefined && newVal !== null ? stripHtmlTags(newVal) : '';
 
   if (s1 === s2 || !s2) return null;
 
@@ -918,7 +918,7 @@ export default function CodexUpdateModal({ onClose }: CodexUpdateModalProps) {
                         <div className={`flex-1 p-5 rounded-2xl border shadow-sm ${isDark ? 'bg-black/20 border-white/10' : `border-black/10 ${theme.sidebarClass}`} flex flex-col`}>
                           <span className={`block text-xs font-black uppercase tracking-widest mb-4 ${isDark ? 'text-blue-400/80' : 'text-blue-600/80'}`}>BẢN GỐC: {CODEX_FIELD_LABELS[key] || key}</span>
                           <div className="flex-1 text-sm whitespace-pre-wrap leading-relaxed">
-                            {oldVal ? stripHtmlTags(String(oldVal)) : <span className="italic opacity-50">Không có dữ liệu</span>}
+                            {oldVal ? stripHtmlTags(oldVal) : <span className="italic opacity-50">Không có dữ liệu</span>}
                           </div>
                         </div>
                       )}
@@ -948,7 +948,7 @@ export default function CodexUpdateModal({ onClose }: CodexUpdateModalProps) {
                           </div>
                           <div className="flex-1 flex flex-col gap-2 w-full">
                             <AutoResizeTextarea 
-                              value={val as string || ''}
+                              value={typeof val === 'object' && val !== null ? JSON.stringify(val, null, 2) : (val as string || '')}
                               onChange={(e) => handleWorldDataFieldChange(key, e.target.value)}
                               className={`w-full min-h-[120px] text-sm outline-none bg-transparent whitespace-pre-wrap leading-relaxed ${isDark ? 'text-white' : 'text-slate-700 bg-white border border-green-200 p-3 rounded-lg shadow-inner'}`}
                             />
@@ -982,7 +982,7 @@ export default function CodexUpdateModal({ onClose }: CodexUpdateModalProps) {
                             {oldItem.description ? (
                               <div>
                                 <div className="font-bold mb-1">Tên: {oldItem.name}</div>
-                                <div>Mô tả: {stripHtmlTags(String(oldItem.description))}</div>
+                                <div>Mô tả: {stripHtmlTags(oldItem.description)}</div>
                               </div>
                             ) : (
                               <span className="italic opacity-50">Địa điểm mới, chưa có trong Codex</span>
@@ -1046,7 +1046,7 @@ export default function CodexUpdateModal({ onClose }: CodexUpdateModalProps) {
                     <div className={`flex-1 p-5 rounded-2xl border shadow-sm ${isDark ? 'bg-black/20 border-white/10' : `border-black/10 ${theme.sidebarClass}`} flex flex-col`}>
                       <span className={`block text-xs font-black uppercase tracking-widest mb-4 ${isDark ? 'text-blue-400/80' : 'text-blue-600/80'}`}>BẢN GỐC: Places</span>
                       <div className="flex-1 text-sm whitespace-pre-wrap leading-relaxed">
-                        {currentWorldDetails.places ? stripHtmlTags(String(currentWorldDetails.places)) : <span className="italic opacity-50">Không có dữ liệu</span>}
+                        {currentWorldDetails.places ? stripHtmlTags(currentWorldDetails.places) : <span className="italic opacity-50">Không có dữ liệu</span>}
                       </div>
                     </div>
                   )}
@@ -1092,7 +1092,7 @@ export default function CodexUpdateModal({ onClose }: CodexUpdateModalProps) {
                     <div className={`flex-1 p-5 rounded-2xl border shadow-sm ${isDark ? 'bg-black/20 border-white/10' : `border-black/10 ${theme.sidebarClass}`} flex flex-col`}>
                       <span className={`block text-xs font-black uppercase tracking-widest mb-4 ${isDark ? 'text-blue-400/80' : 'text-blue-600/80'}`}>BẢN GỐC: Creative Rules</span>
                       <div className="flex-1 text-sm whitespace-pre-wrap leading-relaxed">
-                        {currentCreativeRules ? stripHtmlTags(String(currentCreativeRules)) : <span className="italic opacity-50">Không có dữ liệu</span>}
+                        {currentCreativeRules ? stripHtmlTags(currentCreativeRules) : <span className="italic opacity-50">Không có dữ liệu</span>}
                       </div>
                     </div>
                   )}

@@ -259,6 +259,64 @@ export default function CodexUpdateModal({ onClose }: CodexUpdateModalProps) {
     typeof window !== 'undefined' && window.innerWidth < 768 ? 'updated' : 'both'
   );
 
+  useEffect(() => {
+    // Auto-heal misplaced locations/places in existing pending updates
+    if (gameData && gameData.codexPendingUpdates) {
+      const updates = gameData.codexPendingUpdates;
+      let needsHeal = false;
+      const next = { ...gameData };
+      const nextUpdates = { ...next.codexPendingUpdates };
+      const worldDataKeys = ["name","difficulty","worldState","leaderboards","background","starterTimeline","starterScenario","mainScenario","worldRules","namingConventions","genre","mainMood","pacing","geography","worldHistory","culture","economy","religion","factions","factionRelations","uniqueElements","powerSystem","logicControl","writingStyle","narrativePerspective"];
+      
+      if (nextUpdates.worldData) {
+        if (nextUpdates.worldData.locations) {
+          if (!nextUpdates.worldDetails) nextUpdates.worldDetails = {};
+          nextUpdates.worldDetails.locations = nextUpdates.worldData.locations;
+          delete nextUpdates.worldData.locations;
+          needsHeal = true;
+        }
+        if (nextUpdates.worldData.places) {
+          if (!nextUpdates.worldDetails) nextUpdates.worldDetails = {};
+          nextUpdates.worldDetails.places = nextUpdates.worldData.places;
+          delete nextUpdates.worldData.places;
+          needsHeal = true;
+        }
+        if (nextUpdates.worldData.creativeRules) {
+          nextUpdates.creativeRules = nextUpdates.worldData.creativeRules;
+          delete nextUpdates.worldData.creativeRules;
+          needsHeal = true;
+        }
+      }
+      
+      if (nextUpdates.locations) {
+        if (!nextUpdates.worldDetails) nextUpdates.worldDetails = {};
+        nextUpdates.worldDetails.locations = nextUpdates.locations;
+        delete nextUpdates.locations;
+        needsHeal = true;
+      }
+      if (nextUpdates.places) {
+        if (!nextUpdates.worldDetails) nextUpdates.worldDetails = {};
+        nextUpdates.worldDetails.places = nextUpdates.places;
+        delete nextUpdates.places;
+        needsHeal = true;
+      }
+
+      for (const key of worldDataKeys) {
+        if (nextUpdates[key] !== undefined) {
+          if (!nextUpdates.worldData) nextUpdates.worldData = {};
+          nextUpdates.worldData[key] = nextUpdates[key];
+          delete nextUpdates[key];
+          needsHeal = true;
+        }
+      }
+
+      if (needsHeal) {
+        next.codexPendingUpdates = nextUpdates;
+        setGameData(next);
+      }
+    }
+  }, [gameData]);
+
   if (!gameData || !gameData.codexPendingUpdates) return null;
 
   const currentWorldData = gameData.worldData || {};

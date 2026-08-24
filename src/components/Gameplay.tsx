@@ -1155,12 +1155,67 @@ const applyCodexPendingUpdates = (gameData: any, parsedData: any) => {
   const targetCodexUpdates: any = {};
 
   if (codexUpdatesData && typeof codexUpdatesData === "object") {
+    // Auto-heal: Fix if AI mistakenly placed locations or places directly into worldData or root
+    const worldDataKeys = ["name","difficulty","worldState","leaderboards","background","starterTimeline","starterScenario","mainScenario","worldRules","namingConventions","genre","mainMood","pacing","geography","worldHistory","culture","economy","religion","factions","factionRelations","uniqueElements","powerSystem","logicControl","writingStyle","narrativePerspective"];
+    
+    if (codexUpdatesData.worldData && typeof codexUpdatesData.worldData === "object") {
+      if (codexUpdatesData.worldData.locations || codexUpdatesData.worldData.places) {
+        if (!codexUpdatesData.worldDetails) codexUpdatesData.worldDetails = {};
+        if (codexUpdatesData.worldData.locations) {
+          codexUpdatesData.worldDetails.locations = codexUpdatesData.worldData.locations;
+          delete codexUpdatesData.worldData.locations;
+        }
+        if (codexUpdatesData.worldData.places) {
+          codexUpdatesData.worldDetails.places = codexUpdatesData.worldData.places;
+          delete codexUpdatesData.worldData.places;
+        }
+      }
+    }
+    
+    // Auto-heal: Move root-level worldDetails properties to worldDetails
+    if (codexUpdatesData.locations || codexUpdatesData.places) {
+      if (!codexUpdatesData.worldDetails) codexUpdatesData.worldDetails = {};
+      if (codexUpdatesData.locations) {
+        codexUpdatesData.worldDetails.locations = codexUpdatesData.locations;
+        delete codexUpdatesData.locations;
+      }
+      if (codexUpdatesData.places) {
+        codexUpdatesData.worldDetails.places = codexUpdatesData.places;
+        delete codexUpdatesData.places;
+      }
+    }
+
+    // Auto-heal: Move root-level worldData properties to worldData
+    for (const key of worldDataKeys) {
+      if (codexUpdatesData[key] !== undefined) {
+        if (!codexUpdatesData.worldData) codexUpdatesData.worldData = {};
+        codexUpdatesData.worldData[key] = codexUpdatesData[key];
+        delete codexUpdatesData[key];
+      }
+    }
+    
+    // Auto-heal: Move worldDetails properties mistakenly placed in worldData to worldDetails (if we missed any)
+    if (codexUpdatesData.worldData && typeof codexUpdatesData.worldData === "object") {
+       if (codexUpdatesData.worldData.creativeRules) {
+           codexUpdatesData.creativeRules = codexUpdatesData.worldData.creativeRules;
+           delete codexUpdatesData.worldData.creativeRules;
+       }
+    }
+
     if (codexUpdatesData.worldData && typeof codexUpdatesData.worldData === "object" && Object.keys(codexUpdatesData.worldData).length > 0) {
       targetCodexUpdates.worldData = { ...codexUpdatesData.worldData };
       hasCodexUpdate = true;
     }
     if (codexUpdatesData.worldDetails && typeof codexUpdatesData.worldDetails === "object" && Object.keys(codexUpdatesData.worldDetails).length > 0) {
-      targetCodexUpdates.worldDetails = { ...codexUpdatesData.worldDetails };
+      let details = { ...codexUpdatesData.worldDetails };
+      if (typeof details.locations === 'string') {
+        try {
+          details.locations = JSON.parse(details.locations);
+        } catch (e) {
+          // If parsing fails, just leave it as string (though array is expected)
+        }
+      }
+      targetCodexUpdates.worldDetails = details;
       hasCodexUpdate = true;
     }
     if (codexUpdatesData.creativeRules) {

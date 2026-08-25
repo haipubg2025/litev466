@@ -239,7 +239,8 @@ const formatNPCsCodex = (
   messages?: any[],
   npcTemplateMode: "default" | "custom" = "default",
   customNpcFields: any[] = [],
-  disableDefaultNpcRelationships: boolean = false
+  disableDefaultNpcRelationships: boolean = false,
+  partyTags?: Record<string, string[]>
 ) => {
   if (!npcs || !Array.isArray(npcs)) return "Không có NPC nào.";
   const validNpcs = npcs.filter(Boolean);
@@ -465,6 +466,10 @@ const formatNPCsCodex = (
       `NPC ${idx + 1}:`,
       `  + ID (MÃ ĐỊNH DẠNG DUY NHẤT / TÊN GỐC - BẮT BUỘC GIỮ NGUYÊN ID NÀY TRONG JSON UPDATE KỂ CẢ KHI ĐỔI TÊN): ${npcId}`
     ];
+    
+    if (partyTags && partyTags[npcId] && partyTags[npcId].length > 0) {
+      lines.push(`  + TAG TỔ ĐỘI / QUAN HỆ (BẮT BUỘC CHÚ Ý ĐỂ XỬ LÝ TÌNH HUỐNG): ${partyTags[npcId].join(", ")}`);
+    }
 
     if (npcTemplateMode === "custom" && customNpcFields && customNpcFields.length > 0) {
       const customFieldLines: string[] = [];
@@ -2976,10 +2981,10 @@ THÔNG TIN NHÂN VẬT CHÍNH - MC (BẢN GỐC / SỐ 1 - CHỈ ĐỌC. TUYỆT
 ${formatCodexData(originalMcDataSanitized || mcDataSanitized, [], mcTemplateMode, customMcFields)}
 
 DANH SÁCH NPCs (BẢN HIỆN HÀNH / SỐ 2 - ĐƯỢC PHÉP CẬP NHẬT. LƯU Ý BẢO TOÀN DỮ LIỆU CŨ: KHI CẬP NHẬT TRƯỜNG NÀO, BẮT BUỘC PHẢI XEM XÉT DỮ LIỆU CŨ TRƯỚC; TUYỆT ĐỐI KHÔNG CẮT NGẮN HAY RÚT GỌN NỘI DUNG CŨ; CÁI GÌ CÒN PHÙ HỢP THÌ GIỮ NGUYÊN, CÁI GÌ THAY ĐỔI MỚI SỬA LẠI HOẶC THAY THẾ/NỐI TIẾP):
-${formatNPCsCodex(gameData.npcs, mcLocationStr, actionStr, mcDataSanitized, messages, npcTemplateMode, customNpcFields)}
+${formatNPCsCodex(gameData.npcs, mcLocationStr, actionStr, mcDataSanitized, messages, npcTemplateMode, customNpcFields, gameData?.disableDefaultNpcRelationships || false, gameData?.partyTags)}
 
 DANH SÁCH NPCs (BẢN GỐC / SỐ 1 - CHỈ ĐỌC. TUYỆT ĐỐI NGHIÊM CẤM SỬA ĐỔI):
-${formatNPCsCodex(gameData.originalNpcs || gameData.npcs, mcLocationStr, actionStr, mcDataSanitized, messages, npcTemplateMode, customNpcFields)}
+${formatNPCsCodex(gameData.originalNpcs || gameData.npcs, mcLocationStr, actionStr, mcDataSanitized, messages, npcTemplateMode, customNpcFields, gameData?.disableDefaultNpcRelationships || false, gameData?.partyTags)}
 
 NHIỆM VỤ CỦA BẠN: HÃY TẠO RA LƯỢT CHƠI ĐẦU TIÊN (MỞ MÀN) - LƯỢT 0000. 
 ĐẶC BIỆT QUAN TRỌNG VỀ "KỊCH BẢN MỞ ĐẦU" (starterScenario): Bạn BẮT BUỘC phải mang trọn vẹn toàn bộ nội dung của mục "KỊCH BẢN MỞ ĐẦU" (nếu có trong Thông tin thế giới) vào chính văn Lượt 0000. Bạn phải diễn giải, phân chia và triển khai nội dung đó sao cho hợp lý, sinh động, logic và đạt đủ số chữ (Target Word Count) được yêu cầu. NGHIÊM CẤM TUYỆT ĐỐI việc cắt xén, làm mất, tóm tắt sơ sài hay rút gọn nội dung mà người chơi đã duyệt trong mục KỊCH BẢN MỞ ĐẦU.
@@ -3184,10 +3189,10 @@ ${formatCodexData(mcDataSanitized, [], mcTemplateMode, customMcFields)}
 ${formatCodexData(originalMcDataSanitized || mcDataSanitized, [], mcTemplateMode, customMcFields)}
 
 [DANH SÁCH NPCs VÀ BẢNG THÔNG TIN RIÊNG CHI TIẾT (BẢN HIỆN HÀNH / SỐ 2 - ĐƯỢC PHÉP CẬP NHẬT. LƯU Ý BẢO TOÀN DỮ LIỆU CŨ: KHI CẬP NHẬT TRƯỜNG NÀO, BẮT BUỘC PHẢI XEM XÉT DỮ LIỆU CŨ TRƯỚC; TUYỆT ĐỐI KHÔNG CẮT NGẮN HAY RÚT GỌN NỘI DUNG CŨ; CÁI GÌ CÒN PHÙ HỢP THÌ GIỮ NGUYÊN, CÁI GÌ THAY ĐỔI MỚI SỬA LẠI HOẶC THAY THẾ/NỐI TIẾP)]
-${formatNPCsCodex(gameData.npcs, mcLocationStr, actionStr, mcDataSanitized, messages, npcTemplateMode, customNpcFields)}
+${formatNPCsCodex(gameData.npcs, mcLocationStr, actionStr, mcDataSanitized, messages, npcTemplateMode, customNpcFields, gameData?.disableDefaultNpcRelationships || false, gameData?.partyTags)}
 
 [DANH SÁCH NPCs (BẢN GỐC / SỐ 1 - CHỈ ĐỌC. TUYỆT ĐỐI NGHIÊM CẤM SỬA ĐỔI)]
-${formatNPCsCodex(gameData.originalNpcs || gameData.npcs, mcLocationStr, actionStr, mcDataSanitized, messages, npcTemplateMode, customNpcFields)}
+${formatNPCsCodex(gameData.originalNpcs || gameData.npcs, mcLocationStr, actionStr, mcDataSanitized, messages, npcTemplateMode, customNpcFields, gameData?.disableDefaultNpcRelationships || false, gameData?.partyTags)}
 
 ${detailed10TurnsMemoryText}${memoryText}[QUAN TRỌNG] TOÀN BỘ DIỄN BIẾN CHI TIẾT CỦA ${memoryFullTurnsCount} LƯỢT CHƠI GẦN ĐÂY NHẤT ĐỂ AI LIÊN KẾT LIỀN MẠCH KHÔNG GIAN/THỜI GIAN:
 ${historyText}

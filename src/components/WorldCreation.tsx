@@ -25,6 +25,7 @@ import {
   Download,
   Upload,
   ChevronDown as ChevronDownIcon,
+  MoreVertical,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useStore } from "../store/useStore";
@@ -423,6 +424,13 @@ export default function WorldCreation() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const saveMenuRef = useRef<HTMLDivElement>(null);
 
+  const [showMcCustomMenu, setShowMcCustomMenu] = useState(false);
+  const [showNpcCustomMenu, setShowNpcCustomMenu] = useState(false);
+  const mcCustomInputRef = useRef<HTMLInputElement>(null);
+  const npcCustomInputRef = useRef<HTMLInputElement>(null);
+  const mcCustomMenuRef = useRef<HTMLDivElement>(null);
+  const npcCustomMenuRef = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (
@@ -430,6 +438,18 @@ export default function WorldCreation() {
         !saveMenuRef.current.contains(event.target as Node)
       ) {
         setIsSaveMenuOpen(false);
+      }
+      if (
+        mcCustomMenuRef.current &&
+        !mcCustomMenuRef.current.contains(event.target as Node)
+      ) {
+        setShowMcCustomMenu(false);
+      }
+      if (
+        npcCustomMenuRef.current &&
+        !npcCustomMenuRef.current.contains(event.target as Node)
+      ) {
+        setShowNpcCustomMenu(false);
       }
     }
     document.addEventListener("mousedown", handleClickOutside);
@@ -1787,6 +1807,72 @@ LƯU Ý QUAN TRỌNG: Hãy tạo ra ĐỦ số lượng Location như được y
     e.target.value = ""; // Reset input to allow loading the same file again if needed
   };
 
+  const exportMcCustomFields = () => {
+    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(worldCreation.customMcFields || [], null, 2));
+    const downloadAnchorNode = document.createElement('a');
+    downloadAnchorNode.setAttribute("href", dataStr);
+    downloadAnchorNode.setAttribute("download", "mc_custom_fields.json");
+    document.body.appendChild(downloadAnchorNode);
+    downloadAnchorNode.click();
+    downloadAnchorNode.remove();
+    setShowMcCustomMenu(false);
+  };
+
+  const importMcCustomFields = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      try {
+        const data = JSON.parse(event.target?.result as string);
+        if (Array.isArray(data)) {
+          updateWorldCreation({ customMcFields: data });
+          toast.success("Tải bảng Custom MC thành công!");
+        } else {
+          toast.error("Định dạng không hợp lệ!");
+        }
+      } catch (err) {
+        toast.error("Tệp không hợp lệ hoặc bị lỗi!");
+      }
+    };
+    reader.readAsText(file);
+    e.target.value = "";
+    setShowMcCustomMenu(false);
+  };
+
+  const exportNpcCustomFields = () => {
+    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(worldCreation.customNpcFields || [], null, 2));
+    const downloadAnchorNode = document.createElement('a');
+    downloadAnchorNode.setAttribute("href", dataStr);
+    downloadAnchorNode.setAttribute("download", "npc_custom_fields.json");
+    document.body.appendChild(downloadAnchorNode);
+    downloadAnchorNode.click();
+    downloadAnchorNode.remove();
+    setShowNpcCustomMenu(false);
+  };
+
+  const importNpcCustomFields = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      try {
+        const data = JSON.parse(event.target?.result as string);
+        if (Array.isArray(data)) {
+          updateWorldCreation({ customNpcFields: data });
+          toast.success("Tải bảng Custom NPCs thành công!");
+        } else {
+          toast.error("Định dạng không hợp lệ!");
+        }
+      } catch (err) {
+        toast.error("Tệp không hợp lệ hoặc bị lỗi!");
+      }
+    };
+    reader.readAsText(file);
+    e.target.value = "";
+    setShowNpcCustomMenu(false);
+  };
+
   const tabs = [
     { id: "world", label: "World", icon: Globe },
     { id: "mc", label: "MC", icon: User },
@@ -2694,14 +2780,45 @@ LƯU Ý QUAN TRỌNG: Hãy tạo ra ĐỦ số lượng Location như được y
                           onChange={(imgs) => updateWorldCreation({ mcReferenceImages: imgs })}
                         />
                         <div className="flex justify-between items-center gap-4">
-                          <button
-                            type="button"
-                            onClick={handleResetMC}
-                            className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-red-600/10 border border-red-500/20 text-red-500 hover:bg-red-600/20 transition-all font-bold text-xs sm:text-sm cursor-pointer shadow-sm"
-                          >
-                            <RotateCcw className="w-4 h-4" />
-                            <span>RESET MC</span>
-                          </button>
+                          <div className="flex items-center gap-2">
+                            <button
+                              type="button"
+                              onClick={handleResetMC}
+                              className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-red-600/10 border border-red-500/20 text-red-500 hover:bg-red-600/20 transition-all font-bold text-xs sm:text-sm cursor-pointer shadow-sm"
+                            >
+                              <RotateCcw className="w-4 h-4" />
+                              <span>RESET MC</span>
+                            </button>
+                            <div className="relative" ref={mcCustomMenuRef}>
+                              <button
+                                type="button"
+                                onClick={() => setShowMcCustomMenu(!showMcCustomMenu)}
+                                className={`p-2 rounded-xl border transition-all cursor-pointer ${theme.group === "Dark" ? "border-white/10 hover:bg-white/5 text-white/70" : "border-black/10 hover:bg-black/5 text-black/70"}`}
+                              >
+                                <MoreVertical className="w-5 h-5" />
+                              </button>
+                              
+                              {showMcCustomMenu && (
+                                <div className={`absolute left-0 mt-2 w-48 rounded-xl shadow-lg border z-50 overflow-hidden ${theme.group === "Dark" ? "bg-[#1E293B] border-white/10" : "bg-white border-black/10"}`}>
+                                  <input type="file" ref={mcCustomInputRef} className="hidden" accept=".json" onChange={importMcCustomFields} />
+                                  <button 
+                                    type="button" 
+                                    onClick={exportMcCustomFields}
+                                    className={`w-full text-left px-4 py-3 flex items-center gap-2 text-sm font-medium transition-colors ${theme.group === "Dark" ? "hover:bg-white/5 text-white/90" : "hover:bg-black/5 text-[#334155]"}`}
+                                  >
+                                    <Download className="w-4 h-4" /> Lưu vào máy
+                                  </button>
+                                  <button 
+                                    type="button" 
+                                    onClick={() => mcCustomInputRef.current?.click()}
+                                    className={`w-full text-left px-4 py-3 flex items-center gap-2 text-sm font-medium transition-colors ${theme.group === "Dark" ? "hover:bg-white/5 text-white/90" : "hover:bg-black/5 text-[#334155]"}`}
+                                  >
+                                    <Upload className="w-4 h-4" /> Tải lên từ máy
+                                  </button>
+                                </div>
+                              )}
+                            </div>
+                          </div>
                           <motion.button
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}
@@ -3728,6 +3845,35 @@ LƯU Ý QUAN TRỌNG: Hãy tạo ra ĐỦ số lượng Location như được y
                               <RotateCcw className="w-4 h-4" />
                               <span>RESET NPCs</span>
                             </button>
+                            <div className="relative" ref={npcCustomMenuRef}>
+                              <button
+                                type="button"
+                                onClick={() => setShowNpcCustomMenu(!showNpcCustomMenu)}
+                                className={`p-2 rounded-xl border transition-all cursor-pointer ${theme.group === "Dark" ? "border-white/10 hover:bg-white/5 text-white/70" : "border-black/10 hover:bg-black/5 text-black/70"}`}
+                              >
+                                <MoreVertical className="w-5 h-5" />
+                              </button>
+                              
+                              {showNpcCustomMenu && (
+                                <div className={`absolute left-0 mt-2 w-48 rounded-xl shadow-lg border z-50 overflow-hidden ${theme.group === "Dark" ? "bg-[#1E293B] border-white/10" : "bg-white border-black/10"}`}>
+                                  <input type="file" ref={npcCustomInputRef} className="hidden" accept=".json" onChange={importNpcCustomFields} />
+                                  <button 
+                                    type="button" 
+                                    onClick={exportNpcCustomFields}
+                                    className={`w-full text-left px-4 py-3 flex items-center gap-2 text-sm font-medium transition-colors ${theme.group === "Dark" ? "hover:bg-white/5 text-white/90" : "hover:bg-black/5 text-[#334155]"}`}
+                                  >
+                                    <Download className="w-4 h-4" /> Lưu vào máy
+                                  </button>
+                                  <button 
+                                    type="button" 
+                                    onClick={() => npcCustomInputRef.current?.click()}
+                                    className={`w-full text-left px-4 py-3 flex items-center gap-2 text-sm font-medium transition-colors ${theme.group === "Dark" ? "hover:bg-white/5 text-white/90" : "hover:bg-black/5 text-[#334155]"}`}
+                                  >
+                                    <Upload className="w-4 h-4" /> Tải lên từ máy
+                                  </button>
+                                </div>
+                              )}
+                            </div>
                           </div>
                           <motion.button
                             whileHover={{ scale: 1.05 }}

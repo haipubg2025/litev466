@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { X, Users, Target, Tag, Plus } from 'lucide-react';
+import { X, Users, Target, Tag, Plus, Settings, Check } from 'lucide-react';
 
 interface PartyModalProps {
   isOpen: boolean;
@@ -10,27 +10,46 @@ interface PartyModalProps {
   theme: any;
 }
 
-const AVAILABLE_TAGS = ['Family', 'Vợ', 'Harem', 'Đồng Đội', 'Bạn Bè', 'Cấp Dưới', 'Thuộc Hạ', 'Kẻ Thù'];
+const PRESET_TAG_LISTS = {
+  'Mặc định': ['Family', 'Vợ', 'Harem', 'Bạn Tình', 'Đồng Đội', 'Bạn Bè', 'Người Quen', 'Chủ Nhân', 'Cấp Dưới', 'Thuộc Hạ', 'Kẻ Thù', 'Lạ Mặt'],
+  'Tình Cảm / Romance': ['Chính Thất', 'Vợ Lẽ', 'Bạn Tình', 'Mập Mờ', 'Thanh Mai Trúc Mã', 'Tình Đầu', 'Đơn Phương', 'Hồng Nhan Kỷ', 'Sugar Baby', 'Sugar Daddy'],
+  'Fantasy / RPG': ['Tổ Đội', 'Bang Hội', 'Đồng Hành', 'Sư Phụ', 'Học Đồ', 'Triệu Hồi Thú', 'Thú Cưng', 'Pháp Sư', 'Hiệp Sĩ', 'NPC Nhiệm Vụ', 'Kẻ Thù', 'Boss'],
+  'Tu Tiên / Cổ Trang': ['Đạo Lữ', 'Đỉnh Lô', 'Song Tu', 'Sư Tôn', 'Đồ Đệ', 'Đồng Môn', 'Tông Môn', 'Trưởng Lão', 'Linh Thú', 'Kẻ Thù', 'Thù Địch'],
+  'Hiện Đại / Đô Thị': ['Người Yêu', 'Crush', 'Gia Đình', 'Bạn Thân', 'Hàng Xóm', 'Đồng Nghiệp', 'Sếp', 'Nhân Viên', 'Đối Tác', 'Kình Địch', 'Kẻ Thù'],
+  'Học Đường / School': ['Hội Trưởng', 'Lớp Trưởng', 'Bạn Cùng Lớp', 'Bạn Cùng Bàn', 'Tiền Bối', 'Hậu Bối', 'Giáo Viên', 'Lưu Manh', 'Kẻ Bắt Nạt'],
+  'Mafia / Ngầm': ['Ông Trùm', 'Boss', 'Sát Thủ', 'Bảo Kê', 'Nội Gián', 'Tay Sai', 'Cảnh Sát', 'Đặc Vụ', 'Con Tin'],
+  'Viễn Tưởng / Sci-Fi': ['AI', 'Cyborg', 'Người Ngoài Hành Tinh', 'Chỉ Huy', 'Phi Hành Đoàn', 'Nhà Khoa Học', 'Mẫu Vật', 'Hải Tặc Vũ Trụ'],
+  'Kinh Dị / Sinh Tồn': ['Kẻ Sinh Tồn', 'Zombie', 'Quái Vật', 'Kẻ Khát Máu', 'Kẻ Tâm Thần', 'Kẻ Phản Bội', 'Mồi Nhử', 'Đồng Đội'],
+  'Cung Đấu / Hoàng Gia': ['Hoàng Đế', 'Hoàng Hậu', 'Phi Tần', 'Thái Tử', 'Vương Gia', 'Ám Vệ', 'Thái Giám', 'Cung Nữ', 'Gian Thần'],
+};
+const DEFAULT_TAGS = PRESET_TAG_LISTS['Mặc định'];
 
 export default function PartyModal({ isOpen, onClose, gameData, setGameData, theme }: PartyModalProps) {
   const [activeTab, setActiveTab] = useState<'party' | 'objectives'>('party');
   const [objectives, setObjectives] = useState('');
   const [npcTags, setNpcTags] = useState<Record<string, string[]>>({});
   const [expandedTagListFor, setExpandedTagListFor] = useState<string | null>(null);
+  
+  const [customTags, setCustomTags] = useState<string[]>([]);
+  const [isTagSettingsOpen, setIsTagSettingsOpen] = useState(false);
+  const [newTagInput, setNewTagInput] = useState('');
 
   useEffect(() => {
     if (isOpen && gameData) {
       setObjectives(gameData.mcData?.objectives || '');
       setNpcTags(gameData.partyTags || {});
+      setCustomTags(gameData.customPartyTags || DEFAULT_TAGS);
     }
   }, [isOpen, gameData]);
 
-  const saveToGameData = (newTags: Record<string, string[]>, newObjectives: string) => {
+  const saveToGameData = (newTags: Record<string, string[]>, newObjectives: string, newCustomTags: string[]) => {
     const npcs = gameData?.npcs || [];
     let formattedPartyList = "DANH SÁCH TỔ ĐỘI / GIA ĐÌNH / QUAN HỆ ĐẶC BIỆT:\n";
     
     let hasTagged = false;
-    AVAILABLE_TAGS.forEach(tag => {
+    const tagsToIterate = newCustomTags && newCustomTags.length > 0 ? newCustomTags : DEFAULT_TAGS;
+
+    tagsToIterate.forEach(tag => {
       const npcsWithTag = npcs.filter((n: any) => {
         const npcId = n.id || n.name || n.fullName;
         return newTags[npcId]?.includes(tag);
@@ -51,6 +70,7 @@ export default function PartyModal({ isOpen, onClose, gameData, setGameData, the
     setGameData((prev: any) => ({
       ...prev,
       partyTags: newTags,
+      customPartyTags: newCustomTags,
       mcData: {
         ...(prev?.mcData || {}),
         partyList: formattedPartyList,
@@ -93,7 +113,7 @@ export default function PartyModal({ isOpen, onClose, gameData, setGameData, the
   };
 
   const handleClose = () => {
-    saveToGameData(npcTags, objectives);
+    saveToGameData(npcTags, objectives, customTags);
     onClose();
   };
 
@@ -159,89 +179,212 @@ export default function PartyModal({ isOpen, onClose, gameData, setGameData, the
           <div className="flex-1 p-4 overflow-y-auto">
             {activeTab === 'party' ? (
               <div className="h-full flex flex-col gap-4 max-w-5xl mx-auto w-full">
-                <div className="flex-1 overflow-y-auto space-y-3 pr-2">
-                  {sortedNpcs.length === 0 ? (
-                    <div className={`text-center py-8 opacity-50 ${isDark ? 'text-white' : 'text-slate-900'}`}>
-                      Chưa có NPC nào trong thế giới.
+                {!isTagSettingsOpen ? (
+                  <>
+                    <div className="flex justify-end pr-2">
+                      <button 
+                        onClick={() => setIsTagSettingsOpen(true)}
+                        className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-semibold transition-all ${isDark ? 'bg-white/10 hover:bg-white/20 text-white' : 'bg-slate-100 hover:bg-slate-200 text-slate-700'}`}
+                      >
+                        <Settings className="w-4 h-4" />
+                        Setting TAG
+                      </button>
                     </div>
-                  ) : (
-                    sortedNpcs.map((npc: any, index: number) => {
-                      const npcId = npc.id || npc.name || npc.fullName;
-                      const activeTags = npcTags[npcId] || [];
-                      const hasTag = activeTags.length > 0;
-                      return (
-                        <div 
-                          key={npcId}
-                          className={`p-3 rounded-lg border transition-all ${
-                            hasTag 
-                              ? isDark ? 'border-indigo-500/50 bg-indigo-900/20' : 'border-indigo-400 bg-indigo-50/50'
-                              : isDark ? 'border-white/10 bg-black/20' : 'border-slate-200 bg-white'
-                          }`}
-                        >
-                          <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 mb-3">
-                            <div>
-                              <div className={`font-bold text-lg flex items-center flex-wrap gap-2 ${isDark ? 'text-white' : 'text-slate-900'}`}>
-                                <span className={`text-xs font-mono font-bold px-2 py-0.5 rounded border select-all ${
-                                  isDark ? 'bg-cyan-950/40 text-cyan-300 border-cyan-500/30' : 'bg-cyan-50 text-cyan-800 border-cyan-200'
-                                }`}>
-                                  ID: {npc.id || `npc_${index + 1}`}
-                                </span>
-                                {npc.name || npc.fullName}
-                                {activeTags.map(t => (
-                                  <span key={t} className={`text-[10px] px-2 py-0.5 rounded-full uppercase tracking-wider font-bold ${
-                                    isDark ? 'bg-indigo-500/20 text-indigo-300' : 'bg-indigo-100 text-indigo-700'
-                                  }`}>
-                                    {t}
-                                  </span>
-                                ))}
-                                <button
-                                  onClick={() => setExpandedTagListFor(expandedTagListFor === npcId ? null : npcId)}
-                                  className={`p-1 rounded-full border border-dashed flex items-center justify-center transition-all ${
-                                    expandedTagListFor === npcId
-                                      ? isDark ? 'border-rose-500/50 text-rose-400 hover:bg-rose-500/20' : 'border-rose-400 text-rose-600 hover:bg-rose-50'
-                                      : isDark ? 'border-white/30 text-white/50 hover:text-white hover:border-white/70' : 'border-slate-400 text-slate-500 hover:text-slate-900 hover:border-slate-600'
-                                  }`}
-                                  title={expandedTagListFor === npcId ? "Đóng danh sách" : "Thêm Tag"}
-                                >
-                                  {expandedTagListFor === npcId ? <X size={14} /> : <Plus size={14} />}
-                                </button>
-                              </div>
-                              <div className={`text-xs mt-1 ${isDark ? 'text-white/60' : 'text-slate-500'}`}>
-                                <span className="font-semibold">Vai trò:</span> {npc.role || 'Không rõ'} <br/>
-                                <span className="font-semibold">Vị trí:</span> {npc.location || 'Chưa rõ'}
-                              </div>
-                            </div>
-                          </div>
-                          
-                          {expandedTagListFor === npcId && (
-                            <div className="flex flex-wrap gap-2 mt-2 pt-2 border-t border-dashed border-slate-500/30">
-                              {AVAILABLE_TAGS.map(tag => {
-                                const isActive = activeTags.includes(tag);
-                                return (
-                                  <button
-                                    key={tag}
-                                    onClick={() => handleTagToggle(npcId, tag)}
-                                    className={`px-3 py-1 rounded-full text-xs font-semibold transition-all ${
-                                      isActive
-                                        ? isDark 
-                                          ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-900/50' 
-                                          : 'bg-indigo-500 text-white shadow-md'
-                                        : isDark
-                                          ? 'bg-white/5 text-white/50 hover:bg-white/10 hover:text-white'
-                                          : 'bg-slate-100 text-slate-500 hover:bg-slate-200 hover:text-slate-900'
-                                    }`}
-                                  >
-                                    {tag}
-                                  </button>
-                                );
-                              })}
-                            </div>
-                          )}
+                    <div className="flex-1 overflow-y-auto space-y-3 pr-2">
+                      {sortedNpcs.length === 0 ? (
+                        <div className={`text-center py-8 opacity-50 ${isDark ? 'text-white' : 'text-slate-900'}`}>
+                          Chưa có NPC nào trong thế giới.
                         </div>
-                      );
-                    })
-                  )}
-                </div>
+                      ) : (
+                        sortedNpcs.map((npc: any, index: number) => {
+                          const npcId = npc.id || npc.name || npc.fullName;
+                          const activeTags = npcTags[npcId] || [];
+                          const hasTag = activeTags.length > 0;
+                          return (
+                            <div 
+                              key={npcId}
+                              className={`p-3 rounded-lg border transition-all ${
+                                hasTag 
+                                  ? isDark ? 'border-indigo-500/50 bg-indigo-900/20' : 'border-indigo-400 bg-indigo-50/50'
+                                  : isDark ? 'border-white/10 bg-black/20' : 'border-slate-200 bg-white'
+                              }`}
+                            >
+                              <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 mb-3">
+                                <div>
+                                  <div className={`font-bold text-lg flex items-center flex-wrap gap-2 ${isDark ? 'text-white' : 'text-slate-900'}`}>
+                                    <span className={`text-xs font-mono font-bold px-2 py-0.5 rounded border select-all ${
+                                      isDark ? 'bg-cyan-950/40 text-cyan-300 border-cyan-500/30' : 'bg-cyan-50 text-cyan-800 border-cyan-200'
+                                    }`}>
+                                      ID: {npc.id || `npc_${index + 1}`}
+                                    </span>
+                                    {npc.name || npc.fullName}
+                                    {activeTags.map(t => (
+                                      <span key={t} className={`text-[10px] px-2 py-0.5 rounded-full uppercase tracking-wider font-bold ${
+                                        isDark ? 'bg-indigo-500/20 text-indigo-300' : 'bg-indigo-100 text-indigo-700'
+                                      }`}>
+                                        {t}
+                                      </span>
+                                    ))}
+                                    <button
+                                      onClick={() => setExpandedTagListFor(expandedTagListFor === npcId ? null : npcId)}
+                                      className={`p-1 rounded-full border border-dashed flex items-center justify-center transition-all ${
+                                        expandedTagListFor === npcId
+                                          ? isDark ? 'border-rose-500/50 text-rose-400 hover:bg-rose-500/20' : 'border-rose-400 text-rose-600 hover:bg-rose-50'
+                                          : isDark ? 'border-white/30 text-white/50 hover:text-white hover:border-white/70' : 'border-slate-400 text-slate-500 hover:text-slate-900 hover:border-slate-600'
+                                      }`}
+                                      title={expandedTagListFor === npcId ? "Đóng danh sách" : "Thêm Tag"}
+                                    >
+                                      {expandedTagListFor === npcId ? <X size={14} /> : <Plus size={14} />}
+                                    </button>
+                                  </div>
+                                  <div className={`text-xs mt-1 ${isDark ? 'text-white/60' : 'text-slate-500'}`}>
+                                    <span className="font-semibold">Vai trò:</span> {npc.role || 'Không rõ'} <br/>
+                                    <span className="font-semibold">Vị trí:</span> {npc.location || 'Chưa rõ'}
+                                  </div>
+                                </div>
+                              </div>
+                              
+                              {expandedTagListFor === npcId && (
+                                <div className="flex flex-wrap gap-2 mt-2 pt-2 border-t border-dashed border-slate-500/30">
+                                  {(customTags && customTags.length > 0 ? customTags : DEFAULT_TAGS).map(tag => {
+                                    const isActive = activeTags.includes(tag);
+                                    return (
+                                      <button
+                                        key={tag}
+                                        onClick={() => handleTagToggle(npcId, tag)}
+                                        className={`px-3 py-1 rounded-full text-xs font-semibold transition-all ${
+                                          isActive
+                                            ? isDark 
+                                              ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-900/50' 
+                                              : 'bg-indigo-500 text-white shadow-md'
+                                            : isDark
+                                              ? 'bg-white/5 text-white/50 hover:bg-white/10 hover:text-white'
+                                              : 'bg-slate-100 text-slate-500 hover:bg-slate-200 hover:text-slate-900'
+                                        }`}
+                                      >
+                                        {tag}
+                                      </button>
+                                    );
+                                  })}
+                                </div>
+                              )}
+                            </div>
+                          );
+                        })
+                      )}
+                    </div>
+                  </>
+                ) : (
+                  <div className="flex-1 flex flex-col gap-6 overflow-y-auto pr-2">
+                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b pb-4 border-slate-500/20">
+                      <h3 className={`text-xl font-bold flex items-center gap-2 ${isDark ? 'text-white' : 'text-slate-900'}`}>
+                        <Settings className="w-5 h-5 text-indigo-500" />
+                        Cài Đặt Tag
+                      </h3>
+                      <button 
+                        onClick={() => setIsTagSettingsOpen(false)}
+                        className={`px-4 py-2 flex items-center gap-2 rounded-lg font-bold text-sm transition-all shadow-md ${
+                          isDark ? 'bg-indigo-600 hover:bg-indigo-500 text-white' : 'bg-indigo-500 hover:bg-indigo-600 text-white'
+                        }`}
+                      >
+                        <Check className="w-4 h-4" /> Hoàn Tất
+                      </button>
+                    </div>
+
+                    <div className="space-y-3">
+                      <p className={`text-sm font-semibold flex items-center gap-2 ${isDark ? 'text-white/80' : 'text-slate-700'}`}>
+                        <Tag className="w-4 h-4" /> Các bộ mẫu phổ biến:
+                      </p>
+                      <div className="flex flex-wrap gap-2">
+                        {Object.keys(PRESET_TAG_LISTS).map(presetKey => (
+                          <button 
+                            key={presetKey} 
+                            onClick={() => setCustomTags(PRESET_TAG_LISTS[presetKey as keyof typeof PRESET_TAG_LISTS])}
+                            className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all ${
+                              isDark 
+                                ? 'bg-white/5 hover:bg-white/10 text-white/70 hover:text-white border border-white/10' 
+                                : 'bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 shadow-sm'
+                            }`}
+                          >
+                            {presetKey}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className={`space-y-4 p-4 rounded-xl border ${isDark ? 'bg-black/20 border-white/10' : 'bg-slate-50 border-slate-200'}`}>
+                      <p className={`text-sm font-semibold ${isDark ? 'text-white/80' : 'text-slate-700'}`}>
+                        Danh sách Tag hiện tại (Tùy chỉnh):
+                      </p>
+                      
+                      <div className="flex flex-wrap gap-2 min-h-[60px] content-start">
+                        {customTags.length === 0 && (
+                          <span className={`text-sm italic ${isDark ? 'text-white/40' : 'text-slate-400'}`}>Chưa có tag nào...</span>
+                        )}
+                        {customTags.map((tag, idx) => (
+                          <div 
+                            key={idx} 
+                            className={`flex items-center gap-1 px-3 py-1.5 rounded-full text-sm font-bold shadow-sm ${
+                              isDark 
+                                ? 'bg-indigo-900/40 text-indigo-300 border border-indigo-500/30' 
+                                : 'bg-white text-indigo-700 border border-indigo-200'
+                            }`}
+                          >
+                            {tag}
+                            <button 
+                              onClick={() => setCustomTags(customTags.filter((_, i) => i !== idx))} 
+                              className={`p-0.5 rounded-full transition-colors ${
+                                isDark ? 'hover:bg-white/10 hover:text-white text-indigo-300/70' : 'hover:bg-slate-100 hover:text-slate-900 text-indigo-700/70'
+                              }`}
+                              title="Xóa Tag"
+                            >
+                              <X className="w-3.5 h-3.5" />
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+
+                      <div className="flex gap-2 mt-4 pt-4 border-t border-slate-500/20">
+                        <input 
+                          value={newTagInput} 
+                          onChange={(e) => setNewTagInput(e.target.value)}
+                          onKeyDown={(e) => { 
+                            if (e.key === 'Enter' && newTagInput.trim()) { 
+                              if (!customTags.includes(newTagInput.trim())) {
+                                setCustomTags([...customTags, newTagInput.trim()]); 
+                              }
+                              setNewTagInput(''); 
+                            } 
+                          }}
+                          placeholder="Nhập tên tag mới và nhấn Enter..." 
+                          className={`flex-1 px-4 py-2.5 rounded-lg border outline-none text-sm transition-all ${
+                            isDark 
+                              ? 'bg-black/40 border-white/10 text-white focus:border-indigo-500' 
+                              : 'bg-white border-slate-300 focus:border-indigo-500'
+                          }`}
+                        />
+                        <button 
+                          onClick={() => { 
+                            if (newTagInput.trim()) { 
+                              if (!customTags.includes(newTagInput.trim())) {
+                                setCustomTags([...customTags, newTagInput.trim()]); 
+                              }
+                              setNewTagInput(''); 
+                            } 
+                          }}
+                          className={`px-4 py-2.5 rounded-lg font-bold flex items-center justify-center transition-all ${
+                            isDark 
+                              ? 'bg-white/10 hover:bg-white/20 text-white' 
+                              : 'bg-slate-200 hover:bg-slate-300 text-slate-800'
+                          }`}
+                          title="Thêm"
+                        >
+                          <Plus className="w-5 h-5" />
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
             ) : (
               <div className="h-full flex flex-col gap-2 max-w-5xl mx-auto w-full">

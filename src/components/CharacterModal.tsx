@@ -1067,7 +1067,7 @@ export default function CharacterModal({
         k => !['location', 'currentlocation', 'status', 'statusdata'].includes(k.trim().toLowerCase())
       );
       if (filteredKeys.length > 0) {
-        const newCharData = { ...editedData };
+        const newCharData = JSON.parse(JSON.stringify(editedData));
         filteredKeys.forEach(key => {
           newCharData[key] = pending[key];
           if (!isBuiltInField(key)) {
@@ -2957,7 +2957,7 @@ LƯU Ý:
           npcIndex={type === "mc" ? -1 : (npcIndex as number)}
           onClose={() => setShowConfirmUpdateModal(false)}
           onApply={(updatedData) => {
-            const newCharData = { ...editedData };
+            const newCharData = JSON.parse(JSON.stringify(editedData));
             Object.entries(updatedData).forEach(([k, v]) => {
               newCharData[k] = v;
               if (!isBuiltInField(k)) {

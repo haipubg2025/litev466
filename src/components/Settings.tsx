@@ -1011,90 +1011,7 @@ export default function Settings() {
                 </div>
 
                 <div className="grid grid-cols-1 xl:grid-cols-2 gap-12 text-left">
-                  {/* Cột 1: Api Key Cá Nhân */}
-                  <section className="space-y-8 relative">
-                  <div className="absolute inset-0 bg-black/5 dark:bg-white/5 backdrop-blur-[2px] z-20 flex flex-col items-center justify-center rounded-3xl p-6 text-center shadow-[inset_0_0_20px_rgba(0,0,0,0.1)]">
-                     <span className="text-sm font-bold text-red-500 bg-red-500/10 px-4 py-2 rounded-full mb-3 border border-red-500/20">🔒 Tạm khóa API Key Cá Nhân</span>
-                     <span className={`text-xs ${currentTheme.textSecondary} leading-relaxed max-w-sm`}>Chức năng bị khóa do API Key Free Tier của Google chỉ cho phép <b>250.000 tokens/phút</b>. Lượng ngữ cảnh của game quá lớn sẽ lập tức gây lỗi 429. Vui lòng dùng Proxy mặc định.</span>
-                  </div>
-                  <div className="opacity-30 pointer-events-none space-y-8">
-                  <div className="px-4">
-                    <h3 className={`text-2xl font-bold ${currentTheme.textPrimary}`}>Api Key Cá Nhân</h3>
-                    <p className={`text-sm mt-1 ${currentTheme.textSecondary}`}>Thiết lập Gemini API Key của riêng bạn</p>
-                  </div>
-                  
-                  <div className="p-8 rounded-[2.5rem] theme-panel border-transparent backdrop-blur-xl space-y-8">
-                    <div className="space-y-4">
-                      <div className="space-y-2">
-                        <label className={`text-xs font-bold uppercase tracking-widest opacity-50 ${currentTheme.textPrimary}`}>Thêm Gemini API Key mới</label>
-                        <div className="flex gap-2">
-                          <input 
-                            type="password"
-                            placeholder="Nhập API Key bắt đầu bằng AIza..."
-                            value={newPersonalKey}
-                            onChange={(e) => setNewPersonalKey(e.target.value)}
-                            className="flex-1 px-5 py-4 rounded-xl theme-input border-transparent theme-text-base outline-none focus:border-purple-500/50 transition-colors text-sm"
-                          />
-                          <button
-                            onClick={() => {
-                              if (newPersonalKey.trim()) {
-                                addPersonalApiKey(newPersonalKey.trim());
-                                setNewPersonalKey('');
-                                toast.success('Đã thêm API Key thành công');
-                              }
-                            }}
-                            className="p-4 rounded-xl bg-purple-600 hover:bg-purple-500 text-white transition-colors cursor-pointer"
-                          >
-                            <Plus className="w-5 h-5" />
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Danh sách keys */}
-                    <div className="space-y-3">
-                      {personalApiKeys.length === 0 ? (
-                        <div className="p-6 rounded-2xl theme-panel border-transparent border-dashed text-center">
-                          <p className={`text-xs ${currentTheme.textSecondary}`}>Chưa có API Key cá nhân nào được thêm.</p>
-                        </div>
-                      ) : (
-                        personalApiKeys.map((key, index) => (
-                          <div 
-                            key={`settings-personal-key-${key}-${index}`}
-                            className={`p-4 rounded-2xl border flex items-center justify-between group ${currentTheme.group === 'Dark' ? 'bg-black/30 border-white/5' : 'bg-black/5 border-black/10'}`}
-                          >
-                            <div className="flex items-center gap-3 overflow-hidden">
-                              <div className="w-8 h-8 rounded-lg bg-purple-500/10 flex items-center justify-center text-purple-600 dark:text-purple-400 shrink-0">
-                                <span className="text-xs font-bold">{index + 1}</span>
-                              </div>
-                              <p className={`text-xs font-mono truncate italic ${currentTheme.group === 'Dark' ? 'text-white/60' : 'text-slate-600'}`}>
-                                {key.substring(0, 8)}••••••••{key.substring(key.length - 4)}
-                              </p>
-                            </div>
-                            <button 
-                              onClick={() => {
-                                removePersonalApiKey(key);
-                                toast.success('Đã xóa API Key');
-                              }}
-                              className="p-2 rounded-lg bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white transition-all opacity-0 group-hover:opacity-100 cursor-pointer"
-                            >
-                              <Trash2 className="w-4 h-4" />
-                            </button>
-                          </div>
-                        ))
-                      )}
-                    </div>
-
-                    <div className={`p-6 rounded-2xl bg-purple-500/10 border border-purple-500/20`}>
-                      <p className="text-xs text-purple-400 leading-relaxed italic text-left">
-                        * Ghi chú: Hệ thống sẽ tự động xoay vòng (round-robin) các Key trong danh sách. Nếu có Key bị lỗi sẽ tạm thời đưa vào danh sách đen.
-                      </p>
-                    </div>
-                  </div>
-                  </div>
-                </section>
-
-                {/* Cột 2: Proxy Ngược */}
+                  {/* Cột 1: Proxy Ngược */}
                 <section className="space-y-8">
                   <div className="px-4 flex items-center justify-between">
                     <div>
@@ -1102,16 +1019,7 @@ export default function Settings() {
                       <p className={`text-sm mt-1 ${currentTheme.textSecondary}`}>Quản lý các kết nối qua Proxy tùy chỉnh</p>
                     </div>
                     <div className="flex items-center gap-4">
-                      <button 
-                        onClick={() => setGlobalProxyEnabled(!globalProxyEnabled)}
-                        className={`px-4 py-2 text-sm font-bold rounded-xl border transition-all cursor-pointer ${
-                          globalProxyEnabled 
-                            ? 'bg-green-500/20 text-green-400 border-green-500/30 hover:bg-green-500/30' 
-                            : 'bg-gray-500/20 text-gray-400 border-gray-500/30 hover:bg-gray-500/30'
-                        }`}
-                      >
-                        {globalProxyEnabled ? 'ON' : 'OFF'}
-                      </button>
+                      
                       <button
                         onClick={handleLoadAllModels}
                         disabled={isLoadingAllModels || proxies.length === 0}
@@ -1205,7 +1113,7 @@ export default function Settings() {
                                   <option key={`settings-model-choice-${proxy.id}-${modelChoice}-${idx}`} value={modelChoice}>{modelChoice}</option>
                                 ))
                               ) : (
-                                <option value="" disabled>Chưa tải danh sách Model...</option>
+                                <option value="" disabled>Hãy bấm Load Models để sử dụng proxy</option>
                               )}
                             </select>
                           </div>
@@ -1316,6 +1224,88 @@ export default function Settings() {
                       <Upload className="w-4 h-4" /> Nhập JSON
                       <input type="file" className="hidden" accept=".json" onChange={importConfig} />
                     </label>
+                  </div>
+                </section>
+                {/* Cột 2: Api Key Cá Nhân */}
+                  <section className="space-y-8 relative">
+                  <div className="absolute inset-0 bg-black/5 dark:bg-white/5 backdrop-blur-[2px] z-20 flex flex-col items-center justify-center rounded-3xl p-6 text-center shadow-[inset_0_0_20px_rgba(0,0,0,0.1)]">
+                     <span className="text-sm font-bold text-red-500 bg-red-500/10 px-4 py-2 rounded-full mb-3 border border-red-500/20">🔒 Tạm khóa API Key Cá Nhân</span>
+                     <span className={`text-xs ${currentTheme.textSecondary} leading-relaxed max-w-sm`}>Chức năng bị khóa do API Key Free Tier của Google chỉ cho phép <b>250.000 tokens/phút</b>. Lượng ngữ cảnh của game quá lớn sẽ lập tức gây lỗi 429. Vui lòng dùng Proxy mặc định.</span>
+                  </div>
+                  <div className="opacity-30 pointer-events-none space-y-8">
+                  <div className="px-4">
+                    <h3 className={`text-2xl font-bold ${currentTheme.textPrimary}`}>Api Key Cá Nhân</h3>
+                    <p className={`text-sm mt-1 ${currentTheme.textSecondary}`}>Thiết lập Gemini API Key của riêng bạn</p>
+                  </div>
+                  
+                  <div className="p-8 rounded-[2.5rem] theme-panel border-transparent backdrop-blur-xl space-y-8">
+                    <div className="space-y-4">
+                      <div className="space-y-2">
+                        <label className={`text-xs font-bold uppercase tracking-widest opacity-50 ${currentTheme.textPrimary}`}>Thêm Gemini API Key mới</label>
+                        <div className="flex gap-2">
+                          <input 
+                            type="password"
+                            placeholder="Nhập API Key bắt đầu bằng AIza..."
+                            value={newPersonalKey}
+                            onChange={(e) => setNewPersonalKey(e.target.value)}
+                            className="flex-1 px-5 py-4 rounded-xl theme-input border-transparent theme-text-base outline-none focus:border-purple-500/50 transition-colors text-sm"
+                          />
+                          <button
+                            onClick={() => {
+                              if (newPersonalKey.trim()) {
+                                addPersonalApiKey(newPersonalKey.trim());
+                                setNewPersonalKey('');
+                                toast.success('Đã thêm API Key thành công');
+                              }
+                            }}
+                            className="p-4 rounded-xl bg-purple-600 hover:bg-purple-500 text-white transition-colors cursor-pointer"
+                          >
+                            <Plus className="w-5 h-5" />
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Danh sách keys */}
+                    <div className="space-y-3">
+                      {personalApiKeys.length === 0 ? (
+                        <div className="p-6 rounded-2xl theme-panel border-transparent border-dashed text-center">
+                          <p className={`text-xs ${currentTheme.textSecondary}`}>Chưa có API Key cá nhân nào được thêm.</p>
+                        </div>
+                      ) : (
+                        personalApiKeys.map((key, index) => (
+                          <div 
+                            key={`settings-personal-key-${key}-${index}`}
+                            className={`p-4 rounded-2xl border flex items-center justify-between group ${currentTheme.group === 'Dark' ? 'bg-black/30 border-white/5' : 'bg-black/5 border-black/10'}`}
+                          >
+                            <div className="flex items-center gap-3 overflow-hidden">
+                              <div className="w-8 h-8 rounded-lg bg-purple-500/10 flex items-center justify-center text-purple-600 dark:text-purple-400 shrink-0">
+                                <span className="text-xs font-bold">{index + 1}</span>
+                              </div>
+                              <p className={`text-xs font-mono truncate italic ${currentTheme.group === 'Dark' ? 'text-white/60' : 'text-slate-600'}`}>
+                                {key.substring(0, 8)}••••••••{key.substring(key.length - 4)}
+                              </p>
+                            </div>
+                            <button 
+                              onClick={() => {
+                                removePersonalApiKey(key);
+                                toast.success('Đã xóa API Key');
+                              }}
+                              className="p-2 rounded-lg bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white transition-all opacity-0 group-hover:opacity-100 cursor-pointer"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          </div>
+                        ))
+                      )}
+                    </div>
+
+                    <div className={`p-6 rounded-2xl bg-purple-500/10 border border-purple-500/20`}>
+                      <p className="text-xs text-purple-400 leading-relaxed italic text-left">
+                        * Ghi chú: Hệ thống sẽ tự động xoay vòng (round-robin) các Key trong danh sách. Nếu có Key bị lỗi sẽ tạm thời đưa vào danh sách đen.
+                      </p>
+                    </div>
+                  </div>
                   </div>
                 </section>
               </div>

@@ -262,10 +262,9 @@ export default function CodexUpdateModal({ onClose }: CodexUpdateModalProps) {
   useEffect(() => {
     // Auto-heal misplaced locations/places in existing pending updates
     if (gameData && gameData.codexPendingUpdates) {
-      const updates = gameData.codexPendingUpdates;
       let needsHeal = false;
       const next = { ...gameData };
-      const nextUpdates = { ...next.codexPendingUpdates };
+      const nextUpdates = JSON.parse(JSON.stringify(next.codexPendingUpdates));
       const worldDataKeys = ["name","difficulty","worldState","leaderboards","background","starterTimeline","starterScenario","mainScenario","worldRules","namingConventions","genre","mainMood","pacing","geography","worldHistory","culture","economy","religion","factions","factionRelations","uniqueElements","powerSystem","logicControl","writingStyle","narrativePerspective"];
       
       if (nextUpdates.worldData) {
@@ -310,9 +309,27 @@ export default function CodexUpdateModal({ onClose }: CodexUpdateModalProps) {
         }
       }
 
+      if (nextUpdates.worldDetails && nextUpdates.worldDetails.locations) {
+        if (!Array.isArray(nextUpdates.worldDetails.locations)) {
+           // If it's a string, try parsing it, or wrap it in an object
+           if (typeof nextUpdates.worldDetails.locations === 'string') {
+              try {
+                  const parsed = JSON.parse(nextUpdates.worldDetails.locations);
+                  nextUpdates.worldDetails.locations = Array.isArray(parsed) ? parsed : [parsed];
+              } catch (e) {
+                  nextUpdates.worldDetails.locations = [{ name: "New Location", description: nextUpdates.worldDetails.locations }];
+              }
+           } else {
+              nextUpdates.worldDetails.locations = [nextUpdates.worldDetails.locations];
+           }
+           needsHeal = true;
+        }
+      }
+
       if (needsHeal) {
         next.codexPendingUpdates = nextUpdates;
         setGameData(next);
+        setPending(nextUpdates);
       }
     }
   }, [gameData]);
@@ -1068,7 +1085,7 @@ export default function CodexUpdateModal({ onClose }: CodexUpdateModalProps) {
                               <span className="text-[10px] uppercase tracking-wider opacity-60">Tên địa điểm</span>
                               <input 
                                 type="text"
-                                value={item.name || ''}
+                                value={typeof item.name === 'object' && item.name !== null ? JSON.stringify(item.name) : (item.name || '')}
                                 onChange={(e) => handleLocationFieldChange(idx, 'name', e.target.value)}
                                 className={`w-full text-sm font-bold outline-none bg-transparent ${isDark ? 'text-white border-b border-white/10 focus:border-green-500/50' : 'text-slate-800 bg-white border border-green-200 px-3 py-1.5 rounded'}`}
                               />
@@ -1076,7 +1093,7 @@ export default function CodexUpdateModal({ onClose }: CodexUpdateModalProps) {
                             <div className="flex flex-col gap-1">
                               <span className="text-[10px] uppercase tracking-wider opacity-60">Mô tả chi tiết</span>
                               <AutoResizeTextarea 
-                                value={item.description || ''}
+                                value={typeof item.description === 'object' && item.description !== null ? JSON.stringify(item.description, null, 2) : (item.description || '')}
                                 onChange={(e) => handleLocationFieldChange(idx, 'description', e.target.value)}
                                 className={`w-full min-h-[80px] text-sm outline-none bg-transparent whitespace-pre-wrap leading-relaxed ${isDark ? 'text-white' : 'text-slate-700 bg-white border border-green-200 p-3 rounded-lg shadow-inner'}`}
                               />
@@ -1125,7 +1142,7 @@ export default function CodexUpdateModal({ onClose }: CodexUpdateModalProps) {
                       </div>
                       <div className="flex-1 flex flex-col gap-2 w-full">
                         <AutoResizeTextarea 
-                          value={pending.worldDetails.places || ''}
+                          value={typeof pending.worldDetails.places === 'object' && pending.worldDetails.places !== null ? JSON.stringify(pending.worldDetails.places, null, 2) : (pending.worldDetails.places || '')}
                           onChange={(e) => handlePlacesChange(e.target.value)}
                           className={`w-full min-h-[120px] text-sm outline-none bg-transparent whitespace-pre-wrap leading-relaxed ${isDark ? 'text-white' : 'text-slate-700 bg-white border border-green-200 p-3 rounded-lg shadow-inner'}`}
                         />
@@ -1171,7 +1188,7 @@ export default function CodexUpdateModal({ onClose }: CodexUpdateModalProps) {
                       </div>
                       <div className="flex-1 flex flex-col gap-2 w-full">
                         <AutoResizeTextarea 
-                          value={pending.creativeRules || ''}
+                          value={typeof pending.creativeRules === 'object' && pending.creativeRules !== null ? JSON.stringify(pending.creativeRules, null, 2) : (pending.creativeRules || '')}
                           onChange={(e) => handleCreativeRulesChange(e.target.value)}
                           className={`w-full min-h-[120px] text-sm outline-none bg-transparent whitespace-pre-wrap leading-relaxed ${isDark ? 'text-white' : 'text-slate-700 bg-white border border-green-200 p-3 rounded-lg shadow-inner'}`}
                         />

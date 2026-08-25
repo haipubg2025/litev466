@@ -2973,12 +2973,14 @@ ${thinkingProcessStr}
 
 BƯỚC 2: RENDER JSON ĐẦU RA (SAU KHI HỘI ĐỒNG HỌP XONG)
 Chủ Toạ Annie phải xuất ra 3 khối JSON hoàn toàn riêng biệt và PHẢI XUẤT ĐÚNG THỨ TỰ:
-1. <json_update>...</json_update>: Chuyên cập nhật hoặc tạo mới mọi thứ trong game (thời gian, thời tiết, vị trí, cập nhật thông tin MC, NPC, tạo NPC mới).
-2. <json_output>...</json_output>: Chứa dàn ý và chính văn truyện.
-3. <json_actions>...</json_actions>: Chứa các gợi ý hành động rẽ nhánh.
+1. <json_update>...</json_update>: Cập nhật thời gian, thời tiết, vị trí, NPC, tạo NPC mới...
+2. <json_MC>...</json_MC>: Chuyên cập nhật thông tin cho MC.
+3. <json_output>...</json_output>: Chứa dàn ý và chính văn truyện.
+4. <json_memory>...</json_memory>: Chứa tóm tắt sự kiện ký ức ngắn gọn.
+5. <json_actions>...</json_actions>: Chứa các gợi ý hành động rẽ nhánh.
 
 [CẢNH BÁO CÚ PHÁP JSON NGHIÊM TRỌNG]: TUYỆT ĐỐI KHÔNG ĐƯỢC LÀM GÃY JSON! Khi viết lời thoại bằng dấu ngoặc kép (") BÊN TRONG nội dung văn bản, BẮT BUỘC phải escape thành (\\"). KHUYẾN CÁO TỐI THƯỢNG: TUYỆT ĐỐI KHÔNG escape các dấu nháy kép dùng để định dạng cấu trúc JSON (tức là nháy bọc quanh key và value). ĐỐI VỚI THẺ HTML BÊN TRONG TEXT (như <span style='...'>), CẤM TUYỆT ĐỐI KHÔNG ĐƯỢC DÙNG DẤU NGOẶC KÉP ("), CHỈ ĐƯỢC DÙNG DẤU NGOẶC ĐƠN (') ĐỂ KHÔNG PHÁ VỠ CẤU TRÚC JSON. Hãy cẩn thận kiểm tra, không được viết dư dấu phẩy (,) ở cuối danh sách hay object. Việc xuất JSON không hợp lệ sẽ gây sập toàn bộ hệ thống!
-Ngôn ngữ sử dụng: Tiếng Việt 100%. Đối với việc CẢI TẠO, CẬP NHẬT thông tin trong "mcUpdates", "npcUpdates" VÀ "codexUpdates" (bên trong <json_update>), BẮT BUỘC PHẢI KHÁM XÉT KỸ CÁC SỰ KIỆN VỪA QUA SAU ĐÓ CẬP NHẬT NHỮNG KHÍA CẠNH, KEYS BỊ THAY ĐỔI. ⚠️⚠️⚠️ [CỰC KỲ QUAN TRỌNG VỀ LƯỢT 0000]: TẠI LƯỢT 0000 (LƯỢT ĐẦU TIÊN), TUYỆT ĐỐI NGHIÊM CẤM CẬP NHẬT CÁC TRƯỜNG THÔNG TIN GỐC (Bao gồm các trường mặc định và các trường CUSTOM) của MC và NPC trong "mcUpdates" và "npcUpdates". Ở lượt 0000, đối với MC/NPC, BẠN CHỈ ĐƯỢC PHÉP cập nhật "statusData", "location", "objectives" và "inventoryChanges" (nếu có nhặt/mất đồ khởi đầu) HOẶC tạo mới NPC vào "newNPCs", tuyệt đối không được viết lại hay làm hỏng thông tin cơ bản của họ! ĐỒNG THỜI, TUYỆT ĐỐI NGHIÊM CẤM CẬP NHẬT HOẶC IN NỘI DUNG RA TRONG "codexUpdates" TẠI LƯỢT 0000. Ở lượt 0000, trường "codexUpdates" phải hoàn toàn trống rỗng hoặc là {}! [NGUYÊN TẮC BẢO TOÀN DỮ LIỆU CŨ VÀ CẤM TÓM TẮT RÚT GỌN - TỐI THƯỢNG]: KHI AI SÁNG TẠO RA HOẶC CẬP NHẬT NỘI DUNG CHO BẤT KỲ TRƯỜNG THÔNG TIN NÀO CỦA MC, NPC, HOẶC CODEX THẾ GIỚI, BẮT BUỘC PHẢI XEM XÉT KỸ NỘI DUNG CŨ TRƯỚC. TUYỆT ĐỐI KHÔNG CẬP NHẬT THEO KIỂU CẮT NGẮN, TÓM TẮT SƠ SÀI, RÚT GỌN HOẶC ĐƠN GIẢN HÓA NỘI DUNG CŨ; CÁI GÌ CÒN PHÙ HỢP THÌ GIỮ NGUYÊN HOÀN TOÀN, CÁI GÌ THỰC SỰ THAY ĐỔI THÌ MỚI SỬA LẠI HOẶC THAY THẾ, HOẶC NỐI THÊM PHẦN MỚI VÀO. CHỈ CẬP NHẬT KHI THỰC SỰ CẦN THIẾT. VÀ MỘT KHI ĐÃ CẬP NHẬT VĂN BẢN, BẠN BẮT BUỘC PHẢI BẢO TOÀN DỮ LIỆU GỐC BẰNG CÁCH SAO CHÉP TOÀN BỘ NỘI DUNG CŨ RỒI CHÈN/SỬA/NỐI THÊM VÀO, TUYỆT ĐỐI KHÔNG TRẢ VỀ CHUỖI NGẮN TỦN LÀM GHI ĐÈ VÀ MẤT SẠCH DỮ LIỆU GỐC CỦA NGƯỜI CHƠI. Tuyệt đối không bỏ sót việc update TÂM TRẠNG (mood), TÂM LÝ (psychological) VÀ CÁC TRẠNG THÁI KHÁC trong statusData của MC và NPC mỗi lượt.
+Ngôn ngữ sử dụng: Tiếng Việt 100%. Đối với việc CẢI TẠO, CẬP NHẬT thông tin trong "mcUpdates" (bên trong <json_MC>), "npcUpdates" VÀ "codexUpdates" (bên trong <json_update>), BẮT BUỘC PHẢI KHÁM XÉT KỸ CÁC SỰ KIỆN VỪA QUA SAU ĐÓ CẬP NHẬT NHỮNG KHÍA CẠNH, KEYS BỊ THAY ĐỔI. ⚠️⚠️⚠️ [CỰC KỲ QUAN TRỌNG VỀ LƯỢT 0000]: TẠI LƯỢT 0000 (LƯỢT ĐẦU TIÊN), TUYỆT ĐỐI NGHIÊM CẤM CẬP NHẬT CÁC TRƯỜNG THÔNG TIN GỐC (Bao gồm các trường mặc định và các trường CUSTOM) của MC và NPC trong "mcUpdates" và "npcUpdates". Ở lượt 0000, đối với MC/NPC, BẠN CHỈ ĐƯỢC PHÉP cập nhật "statusData", "location", "objectives" và "inventoryChanges" (nếu có nhặt/mất đồ khởi đầu) HOẶC tạo mới NPC vào "newNPCs", tuyệt đối không được viết lại hay làm hỏng thông tin cơ bản của họ! ĐỒNG THỜI, TUYỆT ĐỐI NGHIÊM CẤM CẬP NHẬT HOẶC IN NỘI DUNG RA TRONG "codexUpdates" TẠI LƯỢT 0000. Ở lượt 0000, trường "codexUpdates" phải hoàn toàn trống rỗng hoặc là {}! [NGUYÊN TẮC BẢO TOÀN DỮ LIỆU CŨ VÀ CẤM TÓM TẮT RÚT GỌN - TỐI THƯỢNG]: KHI AI SÁNG TẠO RA HOẶC CẬP NHẬT NỘI DUNG CHO BẤT KỲ TRƯỜNG THÔNG TIN NÀO CỦA MC, NPC, HOẶC CODEX THẾ GIỚI, BẮT BUỘC PHẢI XEM XÉT KỸ NỘI DUNG CŨ TRƯỚC. TUYỆT ĐỐI KHÔNG CẬP NHẬT THEO KIỂU CẮT NGẮN, TÓM TẮT SƠ SÀI, RÚT GỌN HOẶC ĐƠN GIẢN HÓA NỘI DUNG CŨ; CÁI GÌ CÒN PHÙ HỢP THÌ GIỮ NGUYÊN HOÀN TOÀN, CÁI GÌ THỰC SỰ THAY ĐỔI THÌ MỚI SỬA LẠI HOẶC THAY THẾ, HOẶC NỐI THÊM PHẦN MỚI VÀO. CHỈ CẬP NHẬT KHI THỰC SỰ CẦN THIẾT. VÀ MỘT KHI ĐÃ CẬP NHẬT VĂN BẢN, BẠN BẮT BUỘC PHẢI BẢO TOÀN DỮ LIỆU GỐC BẰNG CÁCH SAO CHÉP TOÀN BỘ NỘI DUNG CŨ RỒI CHÈN/SỬA/NỐI THÊM VÀO, TUYỆT ĐỐI KHÔNG TRẢ VỀ CHUỖI NGẮN TỦN LÀM GHI ĐÈ VÀ MẤT SẠCH DỮ LIỆU GỐC CỦA NGƯỜI CHƠI. Tuyệt đối không bỏ sót việc update TÂM TRẠNG (mood), TÂM LÝ (psychological) VÀ CÁC TRẠNG THÁI KHÁC trong statusData của MC và NPC mỗi lượt.
 CẢNH BÁO QUAN TRỌNG VỀ STATUSDATA: Hệ thống statusData nay đã có thêm mảng "mood" (Tâm trạng) bên cạnh psychological, physiological, health, condition. Khi xuất bảng JSON cập nhật trạng thái ('statusData'), dữ liệu này sẽ ghi đè HOÀN TOÀN lên dữ liệu cũ ở frontend. Do đó, BẮT BUỘC phải luôn GIỮ LẠI (bê nguyên xi) tất cả các trạng thái cũ chưa hết hạn hoặc trạng thái vĩnh viễn ('permanent') đang nằm ở mốc Dữ Liệu Đầu Vào rồi gộp chung/chèn thêm các trạng thái (đặc biệt là mood và psychological) mới vào để xuất ra nguyên một cục hoàn chỉnh (trừ khi trạng thái cũ đó đã được chữa khỏi/bãi bỏ do diễn biến truyện). NGHIÊM CẤM TỰ Ý LÀM MẤT CÁC TRẠNG THÁI VĨNH VIỄN/QUAN TRỌNG ĐÃ CÓ TRƯỚC ĐÓ CỦA NHÂN VẬT!
 Riêng đối với NPC mới sinh ra trong "newNPCs" thì BẮT BUỘC phải tạo ĐẦY ĐỦ 100% các trường thông tin quy định, tuyệt đối nghiêm cấm việc bỏ trống hoặc viết là ba dấu chấm "...", "chưa rõ", "n/a", "không có", phải bịa ra cho thật hấp dẫn. ĐỒNG THỜI QUAN TRỌNG NHẤT: Quá trình tạo mới NPC này KHÔNG ĐƯỢC PHÉP vi phạm luật bảo vệ đạo đức, tuyệt đối không được tự ý tha hóa, hắc hóa, tô xấu tư cách, hay dâm hóa NPC nếu không có bất kỳ định hướng hay yêu cầu rõ ràng nào từ người chơi. Khởi tạo nhân vật với trạng thái trong sáng, lương thiện hoặc trung lập cơ bản. [HƯỚNG DẪN TỐI QUAN TRỌNG KHI NGƯỜI CHƠI YÊU CẦU TẠO/GẶP NPC]: Nếu trong hành động/yêu cầu của người chơi có ngụ ý "tạo NPC mới" hoặc "gặp một nhân vật mới", AI BẮT BUỘC phải tạo thêm 1 NPC hoàn toàn CHƯA TỪNG TỒN TẠI trong thế giới và đưa vào mảng 'newNPCs'. NGƯỢC LẠI, nếu yêu cầu là "gặp một người nào đó", "gọi..." hoặc mô tả khớp với một NPC ĐÃ CÓ SẴN TRONG DANH SÁCH (Dữ liệu đầu vào) nhưng chưa xuất hiện trong cảnh, AI BẮT BUỘC phải LẤY NGAY NPC CÓ SẴN ĐÓ để đưa vào cảnh truyện (thay đổi currentLocation của họ), TUYỆT ĐỐI KHÔNG ĐƯỢC TẠO RA NPC MỚI TRÙNG LẶP HOẶC CLONE LẠI NPC ĐÃ CÓ!\n
 2980: [QUY TẮC HIỂU RÕ BẢNG SỐ 1 VÀ BẢNG SỐ 2 CỦA MC VÀ NPC (TỐI QUAN TRỌNG)]:
@@ -3006,16 +3008,16 @@ Riêng đối với NPC mới sinh ra trong "newNPCs" thì BẮT BUỘC phải t
 3002:     "fashion": "Trạng thái trang phục/ăn mặc/khỏa thân hiện tại MỚI NHẤT của MC ở cuối lượt chơi (VD: 'đồng phục học sinh', 'đồ ngủ', 'bộ đồ lót ren', 'khỏa thân'...). [BẮT BUỘC LUÔN LUÔN CẬP NHẬT VÀ XUẤT TRƯỜNG NÀY Ở MỖI LƯỢT CHƠI DIỄN RA].",
 3003:     "statusData": { "mood": [], "psychological": [{ "name": "Căng thẳng", "description": "Trạng thái hồi hộp cao độ do đối mặt cường địch.", "type": "temporary", "solvable": "solvable", "duration": "Hiện tại" }], "physiological": [], "health": [], "condition": [] },
 3004:     "partyList": "Cập nhật danh sách Tổ đội / Harem / Gia đình của MC. Ghi nhận Tên, vị trí và vai trò của từng thành viên để không bị quên.",
-3005:     "objectives": "Ghi nhận các mục tiêu lớn, nhiệm vụ của MC. BẮT BUỘC đọc nội dung objectives hiện tại (nếu có), nếu AI thấy cần thiết phải tạo/thêm vào vì có tình tiết như vậy trong chính văn thì BẮT BUỘC COPY NGUYÊN VĂN NỘI DUNG CŨ RỒI VIẾT NỐI TIẾP (APPEND) phần mới vào, TUYỆT ĐỐI KHÔNG xóa gì hay dán đè lên nội dung cũ. (ví dụ mục tiêu: có kẻ thù hay nhóm thù địch cần đánh bại, bảo vệ mục tiêu, hoàn thành 1 nhiệm vụ nào đó...). Người chơi có thể tự do sửa đổi phần này.",
+3005:     "objectives": "Ghi nhận các mục tiêu lớn, nhiệm vụ của MC. Nếu có mục tiêu mới, hãy thêm vào. QUAN TRỌNG: Nếu một mục tiêu cũ ĐÃ ĐƯỢC HOÀN THÀNH hoặc BỊ HỦY BỎ, BẮT BUỘC PHẢI XÓA BỎ nó khỏi danh sách hoặc GHI ĐÈ bằng trạng thái mới (VD: thay vì để 'Đang nợ 50tr', hãy viết đè thành 'Đã trả xong nợ 50tr'). Tuyệt đối không giữ lại các mục tiêu đã cũ/hết hạn gây nhiễu loạn trí nhớ.",
 3006:     "IN_THIS_JSON_OUTPUT": "CẢNH BÁO TỐI QUAN TRỌNG: CHỈ CẬP NHẬT KHI THẬT SỰ CẦN THIẾT. VỚI statusData: nộp LẠI toàn bộ trạng thái chưa bị xoá + trạng thái MỚI! Tuyệt đối không xuất dòng ghi chú này!"
 3007:   },
 3008:   "npcUpdates": [
 3009:     { "id": "Mã ID (Mã định danh duy nhất / Tên gốc) của NPC (BẮT BUỘC giữ nguyên ID gốc từ bảng dữ liệu đầu vào để hệ thống map chính xác, kể cả khi tên NPC 'name' thay đổi)", "updates": { 
-3010:         "LƯU_Ý_KHI_XUẤT_JSON": "TẤT CẢ CÁC TRƯỜNG DỮ LIỆU ĐỀU CẦN ĐƯỢC THEO DÕI VÀ ĐƯỢC PHÉP CẬP NHẬT NẾU THẬT SỰ CẦN THIẾT. BẤT CỨ TRƯỜNG NÀO CÓ SỰ THAY ĐỔI LỚN ĐỀU PHẢI ĐƯA VÀO XÁC NHẬN. TUY NHIÊN, TUYỆT ĐỐI KHÔNG CẬP NHẬT/CHỈNH SỬA 'appearance'. Đừng làm mất statusData vĩnh viễn cũ. KHI CẬP NHẬT BẤT KỲ TRƯỜNG VĂN BẢN NÀO ĐƯỢC PHÉP, BẠN BẮT BUỘC PHẢI COPY TOÀN BỘ NỘI DUNG CŨ RỒI CHÈN THÊM NỘI DUNG MỚI VÀO, để tránh việc xuất 1 câu ngắn làm ghi đè mất sạch lịch sử cũ của NPC! (KHI CẬP NHẬT QUAN HỆ relationships BẮT BUỘC ĐIỀN ĐẦY ĐỦ CẢ 'impression', 'termsOfAddress', VÀ 'selfAppellation' DƯỚI DẠNG MẢNG. BẮT BUỘC XÓA BỎ CÁCH XƯNG HÔ CŨ ĐÃ LỖI THỜI. ĐẶC BIỆT Ở 'selfAppellation': NGHIÊM CẤM TỰ XƯNG BẰNG TÊN RIÊNG).",
+3010:         "LƯU_Ý_KHI_XUẤT_JSON": "TẤT CẢ CÁC TRƯỜNG DỮ LIỆU ĐỀU CẦN ĐƯỢC THEO DÕI VÀ ĐƯỢC PHÉP CẬP NHẬT NẾU THẬT SỰ CẦN THIẾT. BẤT CỨ TRƯỜNG NÀO CÓ SỰ THAY ĐỔI LỚN ĐỀU PHẢI ĐƯA VÀO XÁC NHẬN. TUY NHIÊN, TUYỆT ĐỐI KHÔNG CẬP NHẬT/CHỈNH SỬA 'appearance'. Đừng làm mất statusData vĩnh viễn cũ. KHI CẬP NHẬT, HÃY PHÂN LOẠI: Với các trường 'tính cách', 'tiểu sử' -> Copy nội dung cũ và chèn thêm mới. VỚI CÁC TRƯỜNG 'mục tiêu', 'bí mật', 'trạng thái' (các sự kiện có tính thời điểm) -> NẾU SỰ VIỆC ĐÃ KẾT THÚC, BẮT BUỘC PHẢI GHI ĐÈ/XÓA BỎ thông tin cũ, không được copy lại nguyên văn gây rác bộ nhớ (VD: Nợ đã trả thì xóa dòng 'đang nợ', thay bằng 'đã trả xong nợ'). (KHI CẬP NHẬT QUAN HỆ relationships BẮT BUỘC ĐIỀN ĐẦY ĐỦ CẢ 'impression', 'termsOfAddress', VÀ 'selfAppellation' DƯỚI DẠNG MẢNG. BẮT BUỘC XÓA BỎ CÁCH XƯNG HÔ CŨ ĐÃ LỖI THỜI. ĐẶC BIỆT Ở 'selfAppellation': NGHIÊM CẤM TỰ XƯNG BẰNG TÊN RIÊNG).",
 3011:         ${npcUpdatesJsonStructure},
 3012:         "fashion": "Trạng thái trang phục/ăn mặc/khỏa thân hiện tại MỚI NHẤT của NPC ở cuối lượt chơi (VD: 'váy công sở', 'đồ ngủ', 'khỏa thân'...). CHỈ XUẤT/CẬP NHẬT KHI CÓ SỰ THAY ĐỔI TRANG PHỤC SO VỚI TRƯỚC ĐÓ. Nếu không thay đổi trang phục thì giữ nguyên, KHÔNG xuất trường này.",
 3013:         "statusData": { "mood": [], "psychological": [{ "name": "Phẫn nộ", "description": "Tức giận vì bị phản bội, khó có thể xoa dịu.", "type": "temporary", "solvable": "solvable", "duration": "Vài ngày" }], "physiological": [], "health": [], "condition": [] },
-3014:         "TÊN_TRƯỜNG_ĐÃ_TỒN_TẠI": "CẢNH BÁO: BẮT BUỘC VIẾT LẠI Y NGUYÊN TOÀN BỘ THÔNG TIN CŨ + GIAO THOA THÊM THÔNG TIN MỚI VÀO. CẤM XUẤT RA DỮ LIỆU NGẮN TỦN GÂY GHI ĐÈ VÀ MẤT SẠCH DỮ LIỆU GỐC! Chỉ cập nhật những trường thực sự cần thiết."
+3014:         "TÊN_TRƯỜNG_ĐÃ_TỒN_TẠI": "CẢNH BÁO: Tùy thuộc vào loại dữ liệu! Nếu là Đặc điểm/Tính cách: Copy thông tin cũ + thêm mới. Nếu là Mục tiêu/Sự kiện/Tình trạng đã giải quyết xong: BẮT BUỘC GHI ĐÈ hoặc XÓA BỎ cái cũ, tuyệt đối không copy lại những sự việc đã kết thúc gây mâu thuẫn ký ức AI!"
 3015:     } }
 3016:   ],
   "newNPCs": [
@@ -3041,12 +3043,31 @@ Riêng đối với NPC mới sinh ra trong "newNPCs" thì BẮT BUỘC phải t
 }
 </json_update>
 
+<json_MC>
+{
+  "mcUpdates": {
+    ${mcUpdatesJsonStructure},
+    "fashion": "Trạng thái trang phục/ăn mặc/khỏa thân hiện tại MỚI NHẤT của MC ở cuối lượt chơi (VD: 'đồng phục học sinh', 'đồ ngủ', 'bộ đồ lót ren', 'khỏa thân'...). [BẮT BUỘC LUÔN LUÔN CẬP NHẬT VÀ XUẤT TRƯỜNG NÀY Ở MỖI LƯỢT CHƠI DIỄN RA].",
+    "statusData": { "mood": [], "psychological": [{ "name": "Căng thẳng", "description": "Trạng thái hồi hộp cao độ do đối mặt cường địch.", "type": "temporary", "solvable": "solvable", "duration": "Hiện tại" }], "physiological": [], "health": [], "condition": [] },
+    "partyList": "Cập nhật danh sách Tổ đội / Harem / Gia đình của MC. Ghi nhận Tên, vị trí và vai trò của từng thành viên để không bị quên.",
+    "objectives": "Ghi nhận các mục tiêu lớn, nhiệm vụ của MC. Nếu có mục tiêu mới, hãy thêm vào. QUAN TRỌNG: Nếu một mục tiêu cũ ĐÃ ĐƯỢC HOÀN THÀNH hoặc BỊ HỦY BỎ, BẮT BUỘC PHẢI XÓA BỎ nó khỏi danh sách hoặc GHI ĐÈ bằng trạng thái mới (VD: thay vì để 'Đang nợ 50tr', hãy viết đè thành 'Đã trả xong nợ 50tr'). Tuyệt đối không giữ lại các mục tiêu đã cũ/hết hạn gây nhiễu loạn trí nhớ.",
+    "IN_THIS_JSON_OUTPUT": "CẢNH BÁO TỐI QUAN TRỌNG: CHỈ CẬP NHẬT KHI THẬT SỰ CẦN THIẾT. VỚI statusData: nộp LẠI toàn bộ trạng thái chưa bị xoá + trạng thái MỚI! Tuyệt đối không xuất dòng ghi chú này!"
+  }
+}
+</json_MC>
+
 <json_output>
 {
   "outline": "Trình bày chi tiết toàn bộ Dàn ý đã thống nhất trong quá trình Suy nghĩ (Thinking Process). KHÔNG TÓM TẮT NGẮN GỌN. Ghi RÕ RÀNG Tên Part, mốc thời gian, vị trí không gian, nội dung diễn biến chi tiết và Role nào của Hội đồng AI được chỉ định 'chấp bút' cho Part đó.",
 ${partsJson}
 }
 </json_output>
+
+<json_memory>
+{
+  "memory": "Viết TÓM TẮT KÝ ỨC NGẮN GỌN về những sự kiện, tình tiết quan trọng vừa mới xảy ra trong chính văn phía trên. Hãy tóm lược thành các gạch đầu dòng (Sự kiện gì vừa xảy ra, ai làm gì ai, kết quả ra sao). Đây sẽ là Log Ký Ức chính thức được lưu vào hệ thống, do đó BẮT BUỘC phải tập trung vào SỰ THẬT và HÀNH ĐỘNG khách quan, không viết kiểu tiểu thuyết."
+}
+</json_memory>
 
 <json_actions>
 {

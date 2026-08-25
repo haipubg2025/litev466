@@ -2751,7 +2751,7 @@ export default function Gameplay() {
                       ...msg,
                       isStreaming: false,
                       fullStreamLog: fullText,
-                      outline: parsedData.outline,
+                      outline: parsedData.memory || parsedData.outline,
                       mainText: assembledText,
                       suggestedActions: suggestedActionsData as any[],
                       worldTime: parsedData.worldTime,
@@ -2781,7 +2781,7 @@ export default function Gameplay() {
                 parsedData.worldTime || "",
                 parsedData.weather || "",
                 userAction,
-                parsedData.outline || "",
+                parsedData.memory || parsedData.outline || "",
                 assembledText
               );
               await ragService.addMemory(
@@ -3794,7 +3794,7 @@ ${dramaPromptText ? `- GỢI Ý/YÊU CẦU KỊCH TÍNH TỪ NGƯỜI CHƠI (AI 
                   isStreaming: false,
                   thought: fullThought,
                   fullStreamLog: useStore.getState().fullScreenStreamData,
-                  outline: parsedData.outline,
+                  outline: parsedData.memory || parsedData.outline,
                   mainText: assembledText,
                   suggestedActions: suggestedActionsDataFinal as any[],
                   worldTime: parsedData.worldTime,
@@ -3820,7 +3820,7 @@ ${dramaPromptText ? `- GỢI Ý/YÊU CẦU KỊCH TÍNH TỪ NGƯỜI CHƠI (AI 
               parsedData.worldTime || "",
               parsedData.weather || "",
               userAction || "Bắt đầu",
-              parsedData.outline || "",
+              parsedData.memory || parsedData.outline || "",
               assembledText
             );
             await ragService.addMemory(

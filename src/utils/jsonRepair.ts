@@ -409,6 +409,7 @@ interface GameplayParsedData {
   worldDataUpdates?: any;
   worldDetailsUpdates?: any;
   outline?: string;
+  memory?: string;
   mainText?: string;
   storyParts?: string | string[];
   suggestedActions?: Array<{ action: string; details?: string; timeCost?: string; successRate?: string; gainsLosses?: string }>;
@@ -472,7 +473,8 @@ export function cleanProxyRetryGarbage(rawText: string): string {
     /<json_output>/gi,
     /<json_update>/gi,
     /<json_actions>/gi,
-    /<json_MC>/gi
+    /<json_MC>/gi,
+    /<json_memory>/gi
   ];
 
   let latestIndex = -1;
@@ -984,6 +986,18 @@ export function regexExtractGameplayData(
       data.outline = decodeJsonEscapeSymbols(outlineMatch[1]);
       hasData = true;
     }
+    const memoryMatch = rawText.match(/"memory"\s*:\s*"([^"\\]*(?:\\.[^"\\]*)*)"/i);
+    if (memoryMatch) {
+      data.memory = decodeJsonEscapeSymbols(memoryMatch[1]);
+      hasData = true;
+    } else {
+       // Thử tìm trong khối json_memory
+       const memBlockMatch = rawText.match(/<json_memory>[\s\S]*?"memory"\s*:\s*"([^"\\]*(?:\\.[^"\\]*)*)"[\s\S]*?(?:<\/json_memory>|$)/i);
+       if (memBlockMatch) {
+          data.memory = decodeJsonEscapeSymbols(memBlockMatch[1]);
+          hasData = true;
+       }
+    }
 
     // D. Trích xuất tất cả các trường "part..." dưới dạng danh sách và sắp xếp để ghép thành mainText
     data.mainText = extractAllStoryTextsRobust(rawText);
@@ -996,6 +1010,22 @@ export function regexExtractGameplayData(
     if (mcUpdatesBlock) {
       data.mcUpdates = mcUpdatesBlock;
       hasData = true;
+    } else {
+      // Thử xem nó có nằm trong <json_MC> block mà không có key mcUpdates không
+      const mcBlockMatch = rawText.match(/<json_MC>\s*(\{[\s\S]*?\})\s*(?:<\/json_MC>|$)/i);
+      if (mcBlockMatch) {
+        try {
+          const parsed = JSON.parse(mcBlockMatch[1]);
+          if (parsed.mcUpdates) {
+             data.mcUpdates = parsed.mcUpdates;
+             hasData = true;
+          } else {
+             // Maybe the whole block is mcUpdates
+             data.mcUpdates = parsed;
+             hasData = true;
+          }
+        } catch(e) {}
+      }
     }
 
     const npcUpdatesBlock = extractJsonBlock(rawText, ["npcUpdates", "npcUpdate", "npcsUpdate", "npc_updates"], "array", options);
@@ -1365,14 +1395,23 @@ export function cleanRawOutputText(text: string): string {
     const afterThinking = cleaned.substring(thinkingStartIdx);
     let cutTo = -1;
     const jsonUpdateStart = afterThinking.toLowerCase().indexOf("<json_update>");
+    const jsonMcStart = afterThinking.toLowerCase().indexOf("<json_mc>");
     const jsonOutputStart = afterThinking.toLowerCase().indexOf("<json_output>");
+    const jsonMemoryStart = afterThinking.toLowerCase().indexOf("<json_memory>");
+    const jsonActionsStart = afterThinking.toLowerCase().indexOf("<json_actions>");
     const markdownJsonStart = afterThinking.toLowerCase().indexOf("```json");
     const curlyBraceStart = afterThinking.indexOf("{");
     
     if (jsonUpdateStart !== -1) {
       cutTo = jsonUpdateStart;
+    } else if (jsonMcStart !== -1) {
+      cutTo = jsonMcStart;
     } else if (jsonOutputStart !== -1) {
       cutTo = jsonOutputStart;
+    } else if (jsonMemoryStart !== -1) {
+      cutTo = jsonMemoryStart;
+    } else if (jsonActionsStart !== -1) {
+      cutTo = jsonActionsStart;
     } else if (markdownJsonStart !== -1) {
       cutTo = markdownJsonStart;
     } else if (curlyBraceStart !== -1) {
@@ -1389,7 +1428,11 @@ export function cleanRawOutputText(text: string): string {
   }
 
   // B. Loại bỏ các thẻ XML/HTML của game
+  cleaned = cleaned.replace(/<\/?json_update>/gi, "");
+  cleaned = cleaned.replace(/<\/?json_MC>/gi, "");
   cleaned = cleaned.replace(/<\/?json_output>/gi, "");
+  cleaned = cleaned.replace(/<\/?json_memory>/gi, "");
+  cleaned = cleaned.replace(/<\/?json_actions>/gi, "");
   cleaned = cleaned.replace(/<\/?npc_list>/gi, "");
   cleaned = cleaned.replace(/<\/?thinking_process>/gi, "");
 
@@ -1486,13 +1529,22 @@ export function robustParseGameplayJSON(
       // Tìm xem có thẻ định dạng JSON hoặc dấu cấu trúc nào ở phía sau không để cắt chính xác phần suy nghĩ dở dang
       let cutTo = -1;
       const jsonUpdateStart = cleanRaw.toLowerCase().indexOf("<json_update>");
+      const jsonMcStart = cleanRaw.toLowerCase().indexOf("<json_mc>");
       const jsonOutputStart = cleanRaw.toLowerCase().indexOf("<json_output>");
+      const jsonMemoryStart = cleanRaw.toLowerCase().indexOf("<json_memory>");
+      const jsonActionsStart = cleanRaw.toLowerCase().indexOf("<json_actions>");
       const markdownJsonStart = cleanRaw.toLowerCase().indexOf("```json");
       const firstCurlyBrace = cleanRaw.substring(startIdx).indexOf("{");
       if (jsonUpdateStart !== -1 && jsonUpdateStart > startIdx) {
         cutTo = jsonUpdateStart;
+      } else if (jsonMcStart !== -1 && jsonMcStart > startIdx) {
+        cutTo = jsonMcStart;
       } else if (jsonOutputStart !== -1 && jsonOutputStart > startIdx) {
         cutTo = jsonOutputStart;
+      } else if (jsonMemoryStart !== -1 && jsonMemoryStart > startIdx) {
+        cutTo = jsonMemoryStart;
+      } else if (jsonActionsStart !== -1 && jsonActionsStart > startIdx) {
+        cutTo = jsonActionsStart;
       } else if (markdownJsonStart !== -1 && markdownJsonStart > startIdx) {
         cutTo = markdownJsonStart;
       } else if (firstCurlyBrace !== -1) {
@@ -1517,6 +1569,11 @@ export function robustParseGameplayJSON(
 
   const actionsMatches = [...cleanRaw.matchAll(/<json_actions>([\s\S]*?)(?:<\/json_actions>|$)/gi)];
   actionsMatches.forEach(m => {
+    if (m[1] && m[1].trim()) jsonBlockCandidates.push(m[1].trim());
+  });
+
+  const memoryMatches = [...cleanRaw.matchAll(/<json_memory>([\s\S]*?)(?:<\/json_memory>|$)/gi)];
+  memoryMatches.forEach(m => {
     if (m[1] && m[1].trim()) jsonBlockCandidates.push(m[1].trim());
   });
 

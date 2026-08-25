@@ -103,6 +103,8 @@ export function sanitizeAndFixInlineHtml(text: string): string {
 
 export function stripHtmlTags(text: any): string {
   if (typeof text === "object" && text !== null) return JSON.stringify(text, null, 2);
-  if (!text) return "";
-  return text.replace(/<br\s*\/?>/gi, "\n").replace(/<[^>]+>/g, "");
+  if (text === undefined || text === null) return "";
+  const str = String(text);
+  if (!str) return "";
+  return str.replace(/<br\s*\/?>/gi, "\n").replace(/<[^>]+>/g, "");
 }

@@ -13,6 +13,7 @@ export interface TurnData {
     mainText?: string;
     content?: string;
     outline?: string;
+    memory?: string;
     mcLocation?: string;
     worldTime?: string;
     weather?: string;
@@ -51,7 +52,7 @@ export function synthesizeTurnStoryMemory(
     return `[LƯỢT ${turnIndex} - KÝ ỨC CHI TIẾT TỔNG HỢP]
 • Thời gian & Vị trí: ${mcLocation || "Không xác định"} lúc ${worldTime || ""}${weatherInfo}
 • Hành động MC: ${userAction || "Khởi đầu"}
-• Khái quát/Dàn ý: ${outline || "Không có tóm tắt"}`;
+• Ký Ức Lượt: ${outline || "Không có tóm tắt"}`;
   }
 
   // Clean raw story text from codeblocks, tag markers, and excess blank lines
@@ -88,40 +89,15 @@ export function synthesizeTurnStoryMemory(
       "\n+ Lời thoại & Cam kết chìa khóa: " + selectedQuotes.join(" | ");
   }
 
-  // Split into paragraphs to capture beginning, middle, and ending arcs
-  const paragraphs = cleanText
-    .split(/\n\s*\n/)
-    .map((p) => p.trim())
-    .filter((p) => p.length > 15);
-
-  let storySynthesis = "";
-  if (paragraphs.length <= 2) {
-    storySynthesis = cleanText;
-  } else if (paragraphs.length <= 4) {
-    storySynthesis = paragraphs.join("\n");
-  } else {
-    // Take beginning paragraph, middle paragraphs, and final concluding paragraph
-    const firstPara = paragraphs[0];
-    const midIndex1 = Math.floor(paragraphs.length / 3);
-    const midIndex2 = Math.floor((2 * paragraphs.length) / 3);
-    const midPara1 = paragraphs[midIndex1];
-    const midPara2 = paragraphs[midIndex2];
-    const lastPara = paragraphs[paragraphs.length - 1];
-
-    storySynthesis = `[Mở đầu lượt]: ${firstPara}\n[Diễn biến giữa lượt]: ${midPara1}\n[Phát triển tình tiết]: ${midPara2}\n[Kết cục lượt]: ${lastPara}`;
-  }
-
   const weatherStr = weather ? ` (${weather})` : "";
   const locationStr = mcLocation || "Không xác định";
   const timeStr = worldTime || "Chưa rõ thời gian";
 
-  return `[LƯỢT ${turnIndex} - KÝ ỨC CHI TIẾT TỔNG HỢP CHÍNH VĂN]
+  return `[LƯỢT ${turnIndex} - KÝ ỨC CHI TIẾT TỔNG HỢP]
 • Số lượt: ${turnIndex} (Lượt càng lớn = Càng mới = Ưu tiên tối cao)
 • Vị trí & Thời gian: ${locationStr} [Thời điểm: ${timeStr}${weatherStr}]
 • Hành động MC: ${userAction || "Tiến trình câu chuyện"}
-• Dàn ý / Khái quát: ${outline || "Chưa có dàn ý"}${keyDialogueBlock}
-• Tổng hợp diễn biến chính văn toàn lượt:
-${storySynthesis}`;
+• Ký Ức Lượt (Tóm tắt sự kiện): ${outline || "Chưa có dàn ý"}${keyDialogueBlock}`;
 }
 
 /**
@@ -143,7 +119,7 @@ export function buildDetailedRecentTurnsMemories(
   recentTurns.forEach((t) => {
     const turnIdx = t.index;
     const userAct = t.userMsg?.content || "Hành động theo kịch bản";
-    const outline = t.aiMsg?.outline || "Chưa có dàn ý";
+    const outline = t.aiMsg?.memory || t.aiMsg?.outline || "Chưa có dàn ý";
     const location = t.aiMsg?.mcLocation || "Không xác định";
     const time = t.aiMsg?.worldTime || "";
     const weather = t.aiMsg?.weather || "";

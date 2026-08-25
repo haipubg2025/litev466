@@ -818,8 +818,7 @@ const applyMcUpdates = (mcData: any, mcUpdatesSource: any) => {
     "TÊN_TRƯỜNG_ĐÃ_TỒN_TẠI",
     "VÍ DỤ TÊN_CÁC_TRƯỜNG (KEYS) ĐƯỢC PHÉP",
     "TÊN_CÁC_TRƯỜNG (KEYS) ĐƯỢC PHÉP UPDATE",
-    "IN_THIS_JSON_OUTPUT",
-    "appearance",
+    "IN_THIS_JSON_OUTPUT"
   ].forEach((k) => delete cMc[k]);
 
   // Normalize inventory aliases
@@ -1420,8 +1419,7 @@ const applyNpcUpdates = (npcs: any[], npcUpdatesSource: any) => {
         "TÊN_TRƯỜNG_ĐÃ_TỒN_TẠI",
         "VÍ DỤ TÊN_CÁC_TRƯỜNG (KEYS) ĐƯỢC PHÉP",
         "TÊN_CÁC_TRƯỜNG (KEYS) ĐƯỢC PHÉP UPDATE",
-        "IN_THIS_JSON_OUTPUT",
-    "appearance",
+        "IN_THIS_JSON_OUTPUT"
       ].forEach((k) => delete cNpc[k]);
       delete cNpc.inventory;
       delete cNpc.items;

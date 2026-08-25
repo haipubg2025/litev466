@@ -1388,7 +1388,7 @@ CHỈ TRẢ VỀ JSON THUẦN TÚY, TUYỆT ĐỐI KHÔNG BỌC TRONG MARKDOWN H
       "powers", "skills", "inventory", "preferences", "needs", "needssfw", "needsnsfw",
       "likesdislikesfears", "likesdislikesfearsnsfw", "loveviews", "experience", 
       "nsfwpersonality", "nsfwreactions", "literarydescription", "titles",
-      "id", "name", "role", "avatar", "objectives", "partylist"
+      "id", "name", "role", "avatar", "objectives", "partylist", "customdata", "fashion"
     ];
 
     const getOriginalValLocal = (key: string) => {
@@ -1408,7 +1408,7 @@ CHỈ TRẢ VỀ JSON THUẦN TÚY, TUYỆT ĐỐI KHÔNG BỌC TRONG MARKDOWN H
       const isCustomModeLocal = type === "mc" ? gameData?.mcTemplateMode === "custom" : gameData?.npcTemplateMode === "custom";
       let isAllowed = false;
       if (isCustomModeLocal) {
-         isAllowed = customFields.some((f: any) => f.id.toLowerCase() === keyLower) || ["id", "name", "role", "avatar", "objectives", "partylist"].includes(keyLower);
+         isAllowed = customFields.some((f: any) => f.id.toLowerCase() === keyLower) || ["id", "name", "role", "avatar", "objectives", "partylist", "inventory", "customdata"].includes(keyLower);
       } else {
          isAllowed = defaultFields.includes(keyLower);
       }

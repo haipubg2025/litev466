@@ -766,7 +766,7 @@ Mỗi khi bước vào chế độ suy nghĩ sâu (<THINKING_PROCESS>), bạn s�
    - **Kho báu / Báu vật / Cổ vật**: BẮT BUỘC dùng màu Vàng Kim / Hổ Phách. -> BẮT BUỘC dùng mã màu Hex: ${getColor("khoBau")}
    - **Thuốc / Đan dược / Dược phẩm**: BẮT BUỘC dùng màu Xanh Lá / Lục Bảo. -> BẮT BUỘC dùng mã màu Hex: ${getColor("thuoc")}
    - **Máu / Huyết / Sinh lực**: BẮT BUỘC dùng màu Đỏ Máu (Blood Red). -> BẮT BUỘC dùng mã màu Hex: ${getColor("mau")}
-   - **Dâm thủy / Dâm dịch / Tình dịch / Tinh dịch / Dịch sinh lý**: BẮT BUỘC dùng màu Xanh Lam Dâm Thủy (Blue / Cyan). -> BẮT BUỘC dùng mã màu Hex: ${getColor("damThuy")}
+   - **Dâm thủy / Dâm dịch / Tình dịch / Tinh dịch / Nước bọt / Mồ hôi / Dịch sinh lý**: BẮT BUỘC dùng màu Xanh Lam Dâm Thủy (Blue / Cyan). -> BẮT BUỘC dùng mã màu Hex: ${getColor("damThuy")}
    - **Mana / Năng lượng / Linh thạch**: BẮT BUỘC dùng màu Xanh Lam / Xanh Nước Biển. -> BẮT BUỘC dùng mã màu Hex: ${getColor("mana")}
    - **Thức ăn / Thực phẩm / Món ăn**: BẮT BUỘC dùng màu Cam Sáng / Nâu Đỏ. -> BẮT BUỘC dùng mã màu Hex: ${getColor("thucAn")}
    - **Nước uống / Thức uống / Giải khát**: BẮT BUỘC dùng màu Xanh Nước Biển / Xanh Ngọc. -> BẮT BUỘC dùng mã màu Hex: ${getColor("nuocUong")}
@@ -780,7 +780,7 @@ Mỗi khi bước vào chế độ suy nghĩ sâu (<THINKING_PROCESS>), bạn s�
    - **Âm thanh môi trường / Tiếng động SFX (Tiếng gió, mưa, va chạm, bước chân...)**: BẮT BUỘC dùng màu Lục Bình / Xám Xanh. BẠN PHẢI BỌC TOÀN BỘ CỤM ÂM THANH BẰNG DẤU NGÃ VÀ IN NGHIÊNG *~...~* (Ví dụ: *~RẦM!~*). -> BẮT BUỘC dùng mã màu Hex: ${getColor("amThanhMoiTruong")}
    - **Âm thanh từ Máy móc / Thiết bị (Điện thoại, TV, Máy ghi âm, Bộ đàm, Robot...)**: BẮT BUỘC dùng màu Lục Huỳnh Quang / Xanh Công Nghệ. -> BẮT BUỘC dùng mã màu Hex: ${getColor("amThanhMayMoc")}
 6. **Màu sắc Quy định BẮT BUỘC cho các Cảm Xúc / Trạng thái / Các yếu tố khác**: 
-   - **Máu / Thương tích / Vết thương / Máu me / Cuồng nộ / Sát khí**: BẮT BUỘC dùng màu Huyết Đỏ (Crimson). -> BẮT BUỘC dùng mã màu Hex: ${getColor("mau")}
+   - **Máu / Thương tích / Vết thương / Máu me / Cuồng nộ / Sát khí (TUYỆT ĐỐI CẤM TÔ MÀU DÂM THỦY VÀ NƯỚC BỌT BẰNG MÀU NÀY)**: BẮT BUỘC dùng màu Huyết Đỏ (Crimson). -> BẮT BUỘC dùng mã màu Hex: ${getColor("mau")}
    - **Ma pháp hắc ám / Độc tố / Tà khí / Sự quỷ dị**: BẮT BUỘC dùng màu Tím Than / Tím Khói (Purple). -> BẮT BUỘC dùng mã màu Hex: ${getColor("maPhap")}
    - **Thần thánh / Ánh sáng / Sự uy nghiêm**: BẮT BUỘC dùng màu Vàng Kim (Gold/Amber). -> BẮT BUỘC dùng mã màu Hex: ${getColor("thanThanh")}
    - **Cảm xúc bùng nổ / Lửa thiêu / Cuồng hóa / Sức mạnh tức thời**: BẮT BUỘC dùng màu Cam Rực (Orange/Flame). -> BẮT BUỘC dùng mã màu Hex: ${getColor("camXuc")}
@@ -945,7 +945,8 @@ ${
    - **Kỹ năng / Dị năng / Chiêu thức / Phép thuật**: [kyNang:Cầu Lửa], [kyNang:Haki Vũ Trang], [kyNang:Siêu Tốc Độ], [kyNang:Cú Đấm Thép], [kyNang:Thiên Phú Ma Pháp]
    - **Kho báu / Báu vật / Cổ vật**: [khoBau:Rương Cổ], [khoBau:Chén Thánh], [khoBau:Ngọc Bội Thần Tượng], [khoBau:Vương Miện Vàng], [khoBau:Bảo Kiếm Cổ]
    - **Thuốc / Đan dược / Dược phẩm**: [thuoc:Thần Dược], [thuoc:Bình Máu], [thuoc:Tiêm Sinh Lực], [thuoc:Tẩy Tủy Đan], [thuoc:Băng Gạc Trị Liệu]
-   - **Máu / Huyết / Sinh lực**: [mau:Máu Đỏ], [mau:Giọt Máu Tươi], [mau:Vết Chém Rướm Máu], [mau:Sinh Lực Cuồn Cuộn]
+   - **Máu / Huyết / Sinh lực / Máu Trinh**: [mau:Máu Đỏ], [mau:Máu Trinh], [mau:Vết Chém Rướm Máu], [mau:Sinh Lực Cuồn Cuộn] (TUYỆT ĐỐI CẤM BỌC DÂM THỦY, NƯỚC BỌT HAY DỊCH VÀO TAG NÀY KỂ CẢ KHI CHÚNG XUẤT HIỆN GẦN NHAU TRONG CÂU, PHẢI TÁCH RIÊNG BẰNG TAG [damThuy:...])
+   - **Dâm thủy / Dâm dịch / Nước bọt / Mồ hôi / Dịch sinh lý (BẮT BUỘC DÙNG TAG NÀY CHO CHÚNG, KHÔNG DÙNG TAG KHÁC)**: [damThuy:Dâm Thủy], [damThuy:Dâm Dịch], [damThuy:Nước Bọt], [damThuy:Mồ Hôi], [damThuy:Tinh Dịch]
    - **Mana / Năng lượng / Linh thạch**: [mana:Năng Lượng Linh Thạch], [mana:Mana Cực Đại], [mana:Linh Khí Thuần Khiết], [mana:Nội Lực Siêu Nhiên]
    - **Thức ăn / Thực phẩm**: [thucAn:Thịt Nướng], [thucAn:Bánh Mì], [thucAn:Cơm Nắm], [thucAn:Táo Đỏ], [thucAn:Món Ăn Hoàng Gia]
    - **Nước uống / Thức uống**: [nuocUong:Rượu Nho], [nuocUong:Rượu Vang], [nuocUong:Nước Lọc], [nuocUong:Cà Phê], [nuocUong:Trà Thanh Thủy]
@@ -961,10 +962,10 @@ ${
    - **Cảm xúc bùng nổ / Lửa thiêu / Cuồng hóa**: [camXuc:Nổi Giận], [camXuc:Lửa Giận Hừng Hực], [camXuc:Cuồng Hóa], [camXuc:Nhiệt Huyết Bùng Nổ]
    - **Băng giá / Ánh trăng / Lạnh lẽo**: [bangGia:Băng Phong], [bangGia:Tuyết Rơi], [bangGia:Ánh Trăng Bạc], [bangGia:Băng Giá Lạnh Buốt]
    - **Thực vật / Cỏ cây / Hoa lá**: [thucVat:Hoa Bỉ Ngạn], [thucVat:Cây Cổ Thụ], [thucVat:Thảo Dược Tinh Tuyết], [thucVat:Hoa Hồng Tuyết]
-   - **Thiên nhiên / Mộc hệ / Trị liệu**: [thienNhien:Thánh Thủy], [thienNhien:Khí Tức Sự Sống], [thienNhien:Năng Lượng Xanh Mướt], [thienNhien:Nguồn Sống Tự Nhiên]
+   - **Thiên nhiên / Mộc hệ / Trị liệu**: [thienNhien:Thánh Thủy], [thienNhien:Khí Tức Sự Sống], [thienNhien:Năng Lượng Xanh Mướt], [thienNhien:Nguồn Sống Tự Nhiên] (TUYỆT ĐỐI CẤM bọc dâm thủy, nước bọt, đồ ăn/thức uống vào tag này)
 
 5. **QUY TẮC BẮT BUỘC BỌC CUSTOM TAG CHO BỘ PHẬN CƠ THỂ ([coThe:...])**:
-   - Bạn BẮT BUỘC bọc Tag '[coThe:...]' cho tất cả các từ hoặc cụm từ chỉ bộ phận cơ thể của người hoặc sinh vật (bao gồm cả MC, NPC, hay bất kỳ sinh vật nào) khi chúng xuất hiện trong chính văn hoặc lời thoại!
+   - Bạn BẮT BUỘC bọc Tag '[coThe:...]' cho tất cả các từ hoặc cụm từ chỉ bộ phận cơ thể của người hoặc sinh vật (bao gồm cả MC, NPC, hay bất kỳ sinh vật nào) khi chúng xuất hiện trong chính văn hoặc lời thoại! TUYỆT ĐỐI CẤM bọc các chất lỏng/dịch thể sinh lý (như Dâm thủy, Nước bọt, Mồ hôi, Tinh dịch) vào Tag này, hãy dùng Tag [damThuy:...] cho chúng!
    - Các từ/cụm từ bộ phận cơ thể cần bọc '[coThe:...]' bao gồm (nhưng không giới hạn):
      * Gương mặt & Đầu: '[coThe:đôi mắt]', '[coThe:ánh mắt]', '[coThe:bờ môi]', '[coThe:môi]', '[coThe:chiếc lưỡi]', '[coThe:khuôn mặt]', '[coThe:mái tóc]', '[coThe:sống mũi]', '[coThe:vành tai]'
      * Thân trên & Ngực: '[coThe:bầu ngực]', '[coThe:vòm ngực]', '[coThe:vòng một]', '[coThe:bầu vú]', '[coThe:cặp vú]', '[coThe:núm vú]', '[coThe:đầu ti]', '[coThe:nhũ hoa]', '[coThe:bờ vai]', '[coThe:bờ lưng]', '[coThe:vòng eo]', '[coThe:thắt lưng]', '[coThe:lồng ngực]'
@@ -1461,7 +1462,7 @@ Mỗi khi bước vào chế độ suy nghĩ sâu (<THINKING_PROCESS>), bạn s�
    - **Kho báu / Báu vật / Cổ vật**: BẮT BUỘC dùng màu Vàng Kim / Hổ Phách. -> BẮT BUỘC dùng mã màu Hex: ${getColor("khoBau")}
    - **Thuốc / Đan dược / Dược phẩm**: BẮT BUỘC dùng màu Xanh Lá / Lục Bảo. -> BẮT BUỘC dùng mã màu Hex: ${getColor("thuoc")}
    - **Máu / Huyết / Sinh lực**: BẮT BUỘC dùng màu Đỏ Máu (Blood Red). -> BẮT BUỘC dùng mã màu Hex: ${getColor("mau")}
-   - **Dâm thủy / Dâm dịch / Tình dịch / Tinh dịch / Dịch sinh lý**: BẮT BUỘC dùng màu Xanh Lam Dâm Thủy (Blue / Cyan). -> BẮT BUỘC dùng mã màu Hex: ${getColor("damThuy")}
+   - **Dâm thủy / Dâm dịch / Tình dịch / Tinh dịch / Nước bọt / Mồ hôi / Dịch sinh lý**: BẮT BUỘC dùng màu Xanh Lam Dâm Thủy (Blue / Cyan). -> BẮT BUỘC dùng mã màu Hex: ${getColor("damThuy")}
    - **Mana / Năng lượng / Linh thạch**: BẮT BUỘC dùng màu Xanh Lam / Xanh Nước Biển. -> BẮT BUỘC dùng mã màu Hex: ${getColor("mana")}
    - **Thức ăn / Thực phẩm / Món ăn**: BẮT BUỘC dùng màu Cam Sáng / Nâu Đỏ. -> BẮT BUỘC dùng mã màu Hex: ${getColor("thucAn")}
    - **Nước uống / Thức uống / Giải khát**: BẮT BUỘC dùng màu Xanh Nước Biển / Xanh Ngọc. -> BẮT BUỘC dùng mã màu Hex: ${getColor("nuocUong")}
@@ -1475,8 +1476,8 @@ Mỗi khi bước vào chế độ suy nghĩ sâu (<THINKING_PROCESS>), bạn s�
    - **Âm thanh môi trường / Tiếng động SFX (Tiếng gió, mưa, va chạm, bước chân...)**: BẮT BUỘC dùng màu Lục Bình / Xám Xanh. BẠN PHẢI BỌC TOÀN BỘ CỤM ÂM THANH BẰNG DẤU NGÃ VÀ IN NGHIÊNG *~...~* (Ví dụ: *~RẦM!~*). -> BẮT BUỘC dùng mã màu Hex: ${getColor("amThanhMoiTruong")}
    - **Âm thanh từ Máy móc / Thiết bị (Điện thoại, TV, Máy ghi âm, Bộ đàm, Robot...)**: BẮT BUỘC dùng màu Lục Huỳnh Quang / Xanh Công Nghệ. -> BẮT BUỘC dùng mã màu Hex: ${getColor("amThanhMayMoc")}
 6. **Màu sắc Quy định BẮT BUỘC cho các Cảm Xúc / Trạng thái / Các yếu tố khác**: 
-   - **Máu / Thương tích / Vết thương / Máu me / Cuồng nộ / Sát khí**: BẮT BUỘC dùng màu Huyết Đỏ (Crimson). -> BẮT BUỘC dùng mã màu Hex: ${getColor("mau")}
-   - **Dâm thủy / Dâm dịch / Tình dịch / Tinh dịch / Dịch sinh lý**: BẮT BUỘC dùng màu Xanh Lam Dâm Thủy (Blue / Cyan). -> BẮT BUỘC dùng mã màu Hex: ${getColor("damThuy")}
+   - **Máu / Thương tích / Vết thương / Máu me / Cuồng nộ / Sát khí (TUYỆT ĐỐI CẤM TÔ MÀU DÂM THỦY VÀ NƯỚC BỌT BẰNG MÀU NÀY)**: BẮT BUỘC dùng màu Huyết Đỏ (Crimson). -> BẮT BUỘC dùng mã màu Hex: ${getColor("mau")}
+   - **Dâm thủy / Dâm dịch / Tình dịch / Tinh dịch / Nước bọt / Mồ hôi / Dịch sinh lý**: BẮT BUỘC dùng màu Xanh Lam Dâm Thủy (Blue / Cyan). -> BẮT BUỘC dùng mã màu Hex: ${getColor("damThuy")}
    - **Ma pháp hắc ám / Độc tố / Tà khí / Sự quỷ dị**: BẮT BUỘC dùng màu Tím Than / Tím Khói (Purple). -> BẮT BUỘC dùng mã màu Hex: ${getColor("maPhap")}
    - **Thần thánh / Ánh sáng / Sự uy nghiêm**: BẮT BUỘC dùng màu Vàng Kim (Gold/Amber). -> BẮT BUỘC dùng mã màu Hex: ${getColor("thanThanh")}
    - **Cảm xúc bùng nổ / Lửa thiêu / Cuồng hóa / Sức mạnh tức thời**: BẮT BUỘC dùng màu Cam Rực (Orange/Flame). -> BẮT BUỘC dùng mã màu Hex: ${getColor("camXuc")}
@@ -1651,7 +1652,7 @@ ${
    - **Âm thanh môi trường / Tiếng động SFX (Tiếng gió, mưa, va chạm, bước chân...)**: BẮT BUỘC dùng màu Lục Bình / Xám Xanh. BẠN PHẢI BỌC TOÀN BỘ CỤM ÂM THANH BẰNG DẤU NGÃ VÀ IN NGHIÊNG *~...~* (Ví dụ: *~RẦM!~*). -> BẮT BUỘC dùng mã màu Hex: ${getColor("amThanhMoiTruong")}
    - **Âm thanh từ Máy móc / Thiết bị (Điện thoại, TV, Máy ghi âm, Bộ đàm, Robot...)**: BẮT BUỘC dùng màu Lục Huỳnh Quang / Xanh Công Nghệ. -> BẮT BUỘC dùng mã màu Hex: ${getColor("amThanhMayMoc")}
 6. **Màu sắc Quy định BẮT BUỘC cho các Cảm Xúc / Trạng thái / Các yếu tố khác**: 
-   - **Máu / Thương tích / Vết thương / Máu me / Cuồng nộ / Sát khí**: BẮT BUỘC dùng màu Huyết Đỏ (Crimson). -> BẮT BUỘC dùng mã màu Hex: ${getColor("mau")}
+   - **Máu / Thương tích / Vết thương / Máu me / Cuồng nộ / Sát khí (TUYỆT ĐỐI CẤM TÔ MÀU DÂM THỦY VÀ NƯỚC BỌT BẰNG MÀU NÀY)**: BẮT BUỘC dùng màu Huyết Đỏ (Crimson). -> BẮT BUỘC dùng mã màu Hex: ${getColor("mau")}
    - **Ma pháp hắc ám / Độc tố / Tà khí / Sự quỷ dị**: BẮT BUỘC dùng màu Tím Than / Tím Khói (Purple). -> BẮT BUỘC dùng mã màu Hex: ${getColor("maPhap")}
    - **Thần thánh / Ánh sáng / Sự uy nghiêm**: BẮT BUỘC dùng màu Vàng Kim (Gold/Amber). -> BẮT BUỘC dùng mã màu Hex: ${getColor("thanThanh")}
    - **Cảm xúc bùng nổ / Lửa thiêu / Cuồng hóa / Sức mạnh tức thời**: BẮT BUỘC dùng màu Cam Rực (Orange/Flame). -> BẮT BUỘC dùng mã màu Hex: ${getColor("camXuc")}
@@ -3033,9 +3034,10 @@ BƯỚC 2: RENDER JSON ĐẦU RA (SAU KHI HỘI ĐỒNG HỌP XONG)
 Chủ Toạ Annie phải xuất ra 3 khối JSON hoàn toàn riêng biệt và PHẢI XUẤT ĐÚNG THỨ TỰ:
 1. <json_update>...</json_update>: Cập nhật thời gian, thời tiết, vị trí, NPC, tạo NPC mới...
 2. <json_MC>...</json_MC>: Chuyên cập nhật thông tin cho MC.
-3. <json_output>...</json_output>: Chứa dàn ý và chính văn truyện.
-4. <json_memory>...</json_memory>: Chứa tóm tắt sự kiện ký ức ngắn gọn.
-5. <json_actions>...</json_actions>: Chứa các gợi ý hành động rẽ nhánh.
+3. <json_ToMau>...</json_ToMau>: Liệt kê và hoạch định trước các tag màu và từ khóa sẽ được tô màu trong chính văn.
+4. <json_output>...</json_output>: Chứa dàn ý và chính văn truyện.
+5. <json_memory>...</json_memory>: Chứa tóm tắt sự kiện ký ức ngắn gọn.
+6. <json_actions>...</json_actions>: Chứa các gợi ý hành động rẽ nhánh.
 
 [CẢNH BÁO CÚ PHÁP JSON NGHIÊM TRỌNG]: TUYỆT ĐỐI KHÔNG ĐƯỢC LÀM GÃY JSON! Khi viết lời thoại bằng dấu ngoặc kép (") BÊN TRONG nội dung văn bản, BẮT BUỘC phải escape thành (\\"). KHUYẾN CÁO TỐI THƯỢNG: TUYỆT ĐỐI KHÔNG escape các dấu nháy kép dùng để định dạng cấu trúc JSON (tức là nháy bọc quanh key và value). ĐỐI VỚI THẺ HTML BÊN TRONG TEXT (như <span style='...'>), CẤM TUYỆT ĐỐI KHÔNG ĐƯỢC DÙNG DẤU NGOẶC KÉP ("), CHỈ ĐƯỢC DÙNG DẤU NGOẶC ĐƠN (') ĐỂ KHÔNG PHÁ VỠ CẤU TRÚC JSON. Hãy cẩn thận kiểm tra, không được viết dư dấu phẩy (,) ở cuối danh sách hay object. Việc xuất JSON không hợp lệ sẽ gây sập toàn bộ hệ thống!
 Ngôn ngữ sử dụng: Tiếng Việt 100%. Đối với việc CẢI TẠO, CẬP NHẬT thông tin trong "mcUpdates" (bên trong <json_MC>), "npcUpdates" VÀ "codexUpdates" (bên trong <json_update>), BẮT BUỘC PHẢI KHÁM XÉT KỸ CÁC SỰ KIỆN VỪA QUA SAU ĐÓ CẬP NHẬT NHỮNG KHÍA CẠNH, KEYS BỊ THAY ĐỔI. ⚠️⚠️⚠️ [CỰC KỲ QUAN TRỌNG VỀ LƯỢT 0000]: TẠI LƯỢT 0000 (LƯỢT ĐẦU TIÊN), TUYỆT ĐỐI NGHIÊM CẤM CẬP NHẬT CÁC TRƯỜNG THÔNG TIN GỐC (Bao gồm các trường mặc định và các trường CUSTOM) của MC và NPC trong "mcUpdates" và "npcUpdates". Ở lượt 0000, đối với MC/NPC, BẠN CHỈ ĐƯỢC PHÉP cập nhật "statusData", "location", "objectives" và "inventoryChanges" (nếu có nhặt/mất đồ khởi đầu) HOẶC tạo mới NPC vào "newNPCs", tuyệt đối không được viết lại hay làm hỏng thông tin cơ bản của họ! ĐỒNG THỜI, TUYỆT ĐỐI NGHIÊM CẤM CẬP NHẬT HOẶC IN NỘI DUNG RA TRONG "codexUpdates" TẠI LƯỢT 0000. Ở lượt 0000, trường "codexUpdates" phải hoàn toàn trống rỗng hoặc là {}! [NGUYÊN TẮC BẢO TOÀN DỮ LIỆU CŨ VÀ CẤM TÓM TẮT RÚT GỌN - TỐI THƯỢNG]: KHI AI SÁNG TẠO RA HOẶC CẬP NHẬT NỘI DUNG CHO BẤT KỲ TRƯỜNG THÔNG TIN NÀO CỦA MC, NPC, HOẶC CODEX THẾ GIỚI, BẮT BUỘC PHẢI XEM XÉT KỸ NỘI DUNG CŨ TRƯỚC. TUYỆT ĐỐI KHÔNG CẬP NHẬT THEO KIỂU CẮT NGẮN, TÓM TẮT SƠ SÀI, RÚT GỌN HOẶC ĐƠN GIẢN HÓA NỘI DUNG CŨ; CÁI GÌ CÒN PHÙ HỢP THÌ GIỮ NGUYÊN HOÀN TOÀN, CÁI GÌ THỰC SỰ THAY ĐỔI THÌ MỚI SỬA LẠI HOẶC THAY THẾ, HOẶC NỐI THÊM PHẦN MỚI VÀO. CHỈ CẬP NHẬT KHI THỰC SỰ CẦN THIẾT. VÀ MỘT KHI ĐÃ CẬP NHẬT VĂN BẢN, BẠN BẮT BUỘC PHẢI BẢO TOÀN DỮ LIỆU GỐC BẰNG CÁCH SAO CHÉP TOÀN BỘ NỘI DUNG CŨ RỒI CHÈN/SỬA/NỐI THÊM VÀO, TUYỆT ĐỐI KHÔNG TRẢ VỀ CHUỖI NGẮN TỦN LÀM GHI ĐÈ VÀ MẤT SẠCH DỮ LIỆU GỐC CỦA NGƯỜI CHƠI. Tuyệt đối không bỏ sót việc update TÂM TRẠNG (mood), TÂM LÝ (psychological) VÀ CÁC TRẠNG THÁI KHÁC trong statusData của MC và NPC mỗi lượt.
@@ -3117,6 +3119,17 @@ AI BẮT BUỘC phải đọc thật kỹ danh sách NPC đang ở trong cảnh 
   }
 }
 </json_MC>
+
+<json_ToMau>
+{
+  "colorPlanning": [
+    {
+      "tag_group": "Tên nhóm tag (VD: damThuy, coThe, mau, thienNhien)",
+      "words_to_use": ["danh sách", "các từ khóa", "sẽ được", "sử dụng và bọc tag"]
+    }
+  ]
+}
+</json_ToMau>
 
 <json_output>
 {

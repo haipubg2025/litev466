@@ -945,7 +945,7 @@ ${
    - **Kỹ năng / Dị năng / Chiêu thức / Phép thuật**: [kyNang:Cầu Lửa], [kyNang:Haki Vũ Trang], [kyNang:Siêu Tốc Độ], [kyNang:Cú Đấm Thép], [kyNang:Thiên Phú Ma Pháp]
    - **Kho báu / Báu vật / Cổ vật**: [khoBau:Rương Cổ], [khoBau:Chén Thánh], [khoBau:Ngọc Bội Thần Tượng], [khoBau:Vương Miện Vàng], [khoBau:Bảo Kiếm Cổ]
    - **Thuốc / Đan dược / Dược phẩm**: [thuoc:Thần Dược], [thuoc:Bình Máu], [thuoc:Tiêm Sinh Lực], [thuoc:Tẩy Tủy Đan], [thuoc:Băng Gạc Trị Liệu]
-   - **Máu / Huyết / Sinh lực / Máu Trinh**: [mau:Máu Đỏ], [mau:Máu Trinh], [mau:Vết Chém Rướm Máu], [mau:Sinh Lực Cuồn Cuộn] (TUYỆT ĐỐI CẤM BỌC DÂM THỦY, NƯỚC BỌT HAY DỊCH VÀO TAG NÀY KỂ CẢ KHI CHÚNG XUẤT HIỆN GẦN NHAU TRONG CÂU, PHẢI TÁCH RIÊNG BẰNG TAG [damThuy:...])
+   - **Máu / Huyết / Sinh lực / Máu Trinh**: [mau:Máu Đỏ], [mau:Máu Trinh], [mau:Vết Chém Rướm Máu], [mau:Sinh Lực Cuồn Cuộn] (CẤM, CẤM, CẤM TUYỆT ĐỐI dùng tag [mau:...] cho từ 'dâm thủy', 'nước bọt', 'dịch'. TỪ 'dâm thủy' BẮT BUỘC PHẢI DÙNG TAG [damThuy:dâm thủy])
    - **Dâm thủy / Dâm dịch / Nước bọt / Mồ hôi / Dịch sinh lý (BẮT BUỘC DÙNG TAG NÀY CHO CHÚNG, KHÔNG DÙNG TAG KHÁC)**: [damThuy:Dâm Thủy], [damThuy:Dâm Dịch], [damThuy:Nước Bọt], [damThuy:Mồ Hôi], [damThuy:Tinh Dịch]
    - **Mana / Năng lượng / Linh thạch**: [mana:Năng Lượng Linh Thạch], [mana:Mana Cực Đại], [mana:Linh Khí Thuần Khiết], [mana:Nội Lực Siêu Nhiên]
    - **Thức ăn / Thực phẩm**: [thucAn:Thịt Nướng], [thucAn:Bánh Mì], [thucAn:Cơm Nắm], [thucAn:Táo Đỏ], [thucAn:Món Ăn Hoàng Gia]
@@ -3130,6 +3130,9 @@ AI BẮT BUỘC phải đọc thật kỹ danh sách NPC đang ở trong cảnh 
   ]
 }
 </json_ToMau>
+
+[CẢNH BÁO TỐI THƯỢNG VỀ TAG MÀU TRONG CHÍNH VĂN VÀ CHỐNG "HỌC VẸT" TỪ QUÁ KHỨ]:
+KHI VIẾT CHÍNH VĂN, BẠN BẮT BUỘC PHẢI ÁP DỤNG CÁC TAG MÀU ĐÚNG 100% THEO NHỮNG GÌ ĐÃ HOẠCH ĐỊNH TRONG <json_ToMau>. TUYỆT ĐỐI KHÔNG ĐƯỢC PHÉP "học vẹt" hay copy lại các tag màu bị gắn sai từ các lượt chơi cũ (lịch sử trò chuyện). Lịch sử trò chuyện có thể chứa các tag màu sai do hệ thống cũ để lại (ví dụ [mau:dâm thủy]), BẠN PHẢI TỰ ĐỘNG BỎ QUA CHÚNG VÀ LUÔN LUÔN TUÂN THEO LUẬT TAG MÀU CHUẨN MỚI NHẤT CÙNG BẢN NHÁP <json_ToMau> MÀ BẠN VỪA LẬP RA!
 
 <json_output>
 {

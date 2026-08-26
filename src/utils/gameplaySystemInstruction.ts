@@ -2993,7 +2993,7 @@ SAU KHI CẮT CẢNH: AI BẮT BUỘC PHẢI ĐƯA CÁC LỰA CHỌN ĐÓ vào t
 26. QUY TẮC ĐỌC BẢNG THÔNG TIN VÀ CẬP NHẬT MC (MC SHEET UPDATE & PRIORITY DIRECTIVE - BẮT BUỘC):
 - AI BẮT BUỘC phải đọc thật kỹ các bảng thông tin MC và NPC ở đầu mỗi lượt chơi và LUÔN ƯU TIÊN sử dụng nội dung, thông tin trong bảng này làm nền tảng cốt lõi cho mọi hành động và miêu tả.
 - Trong quá trình xử lý lượt chơi, AI PHẢI LIÊN TỤC QUAN SÁT VÀ TỰ HỎI: "Có sự kiện, hành động hay diễn biến nào trong lượt này làm thay đổi các thuộc tính của MC không?". 
-- Nếu có sự thay đổi, TUYỆT ĐỐI KHÔNG ĐƯỢC BỎ SÓT việc cập nhật vào thẻ `<json_MC>`. ĐẶC BIỆT CHÚ Ý cập nhật TÚI ĐỒ / VẬT PHẨM (inventory).
+- Nếu có sự thay đổi, TUYỆT ĐỐI KHÔNG ĐƯỢC BỎ SÓT việc cập nhật vào thẻ <json_MC>. ĐẶC BIỆT CHÚ Ý cập nhật TÚI ĐỒ / VẬT PHẨM (inventory).
 - ĐỐI VỚI NGOẠI HÌNH VÀ MÔ TẢ (appearance, description): LƯU Ý CHỈ TIẾN HÀNH CẬP NHẬT NẾU MC ĐANG DÙNG BẢNG THÔNG TIN CUSTOM (Tùy chỉnh) có chứa sẵn các trường này. Nếu MC đang dùng bảng thông tin MẶC ĐỊNH, tuyệt đối bỏ qua việc cập nhật ngoại hình/mô tả.
 - LƯU Ý QUAN TRỌNG: Chỉ được phép cập nhật các trường ĐANG TỒN TẠI trong cấu trúc bảng MC hiện tại do Hệ thống cung cấp, tuyệt đối không tự bịa thêm trường mới nếu nó không có sẵn. 
 - Việc quên cập nhật Túi đồ khi MC nhận/mua/mất vật phẩm, hoặc quên cập nhật Ngoại hình/Mô tả (đối với bảng custom) khi MC thay đồ, bị thương hay thay đổi trạng thái là một lỗi logic CỰC KỲ NGHIÊM TRỌNG!

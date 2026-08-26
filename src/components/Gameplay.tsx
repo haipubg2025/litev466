@@ -2986,7 +2986,7 @@ ${formatNPCsCodex(gameData.originalNpcs || gameData.npcs, mcLocationStr, actionS
 
 NHIỆM VỤ CỦA BẠN: HÃY TẠO RA LƯỢT CHƠI ĐẦU TIÊN (MỞ MÀN) - LƯỢT 0000. 
 ĐẶC BIỆT QUAN TRỌNG VỀ "KỊCH BẢN MỞ ĐẦU" (starterScenario): Bạn BẮT BUỘC phải mang trọn vẹn toàn bộ nội dung của mục "KỊCH BẢN MỞ ĐẦU" (nếu có trong Thông tin thế giới) vào chính văn Lượt 0000. Bạn phải diễn giải, phân chia và triển khai nội dung đó sao cho hợp lý, sinh động, logic và đạt đủ số chữ (Target Word Count) được yêu cầu. NGHIÊM CẤM TUYỆT ĐỐI việc cắt xén, làm mất, tóm tắt sơ sài hay rút gọn nội dung mà người chơi đã duyệt trong mục KỊCH BẢN MỞ ĐẦU.
-Cực kỳ quan trọng: Bắt buộc xác lập và tạo lập chuẩn xác, hợp logic các trường báo cáo về VỊ TRÍ CỦA MC, VỊ TRÍ CỦA NPC để thiết lập mốc sinh tồn vững chắc cho cốt truyện. ĐỐI VỚI "THỜI GIAN THẾ GIỚI" (worldTime): BẮT BUỘC PHẢI lấy nguyên văn nội dung từ "MỐC THỜI GIAN MỞ ĐẦU" (starterTimeline: ${gameData.worldData?.starterTimeline || "Không có"}) (Bao gồm đầy đủ giờ, phút, ngày, tháng, năm) để điền vào trường worldTime trong JSON, có thể thêm diễn tiến chi tiết nếu cần.
+Cực kỳ quan trọng: Bắt buộc xác lập và tạo lập chuẩn xác, hợp logic các trường báo cáo về VỊ TRÍ CỦA MC, VỊ TRÍ CỦA NPC để thiết lập mốc sinh tồn vững chắc cho cốt truyện. ĐỐI VỚI "THỜI GIAN THẾ GIỚI" (worldTime): BẮT BUỘC PHẢI lấy nội dung từ "MỐC THỜI GIAN MỞ ĐẦU" (starterTimeline: ${gameData.worldData?.starterTimeline || "Không có"}). BẮT BUỘC DUY TRÌ ĐẦY ĐỦ CÁC ĐƠN VỊ: Giờ, Phút, Thứ, Ngày, Tháng, Năm để điền vào trường worldTime trong JSON, có thể thêm diễn tiến chi tiết nếu cần. TUYỆT ĐỐI KHÔNG TỰ Ý RÚT GỌN BỎ ĐI THÁNG HAY NĂM!
 LƯU Ý ĐẶC BIỆT VỀ NPC Ở LƯỢT 0000: Các NPC đã có mặt trong "DANH SÁCH NPCs" là những nhân vật người chơi đã dày công thiết lập sẵn từ trước. Bạn BẮT BUỘC phải tôn trọng và đưa thẳng các NPC này vào bối cảnh Gameplay. BẠN TUYỆT ĐỐI KHÔNG ĐƯỢC TẠO LẠI (duplicate/recreate) BẤT KỲ NPC NÀO ĐÃ CÓ SẴN (tuyệt đối không đưa họ vào mảng \`newNPCs\`). Bạn chỉ được phép cập nhật thêm trạng thái/vị trí của họ qua mảng \`npcUpdates\`. Mảng \`newNPCs\` CHỈ DÀNH CHO việc sáng tạo ra NPC MỚI HOÀN TOÀN chưa từng xuất hiện.
 Suy luận sâu (Deep Reasoning) về yếu tố Thời Gian và Vị Trí Không Gian để kịch bản khởi đầu thật lôi cuốn, logic với bối cảnh, và phản ánh đúng TÍNH CÁCH cốt lõi của MC. Đưa MC vào một tình huống cụ thể ngay lúc này.
 LƯU Ý NGHIÊM KHẮC CHO LƯỢT 0000: Có thể do khởi đầu có quá nhiều Data JSON nên AI thường có xu hướng bỏ qua hoặc viết rất ngắn phần THINKING_PROCESS, AI cũng hay bỏ quên việc khai báo THỜI GIAN VÀ VỊ TRÍ. BẠN TUYỆT ĐỐI KHÔNG ĐƯỢC MẮC SAI LẦM NÀY NỮA! BẮT BUỘC PHẢI KHAI TRIỂN CHUỖI SUY NGHĨ (THINKING_PROCESS) VÔ CÙNG CHI TIẾT VÀ TÍNH TOÁN KỸ VỀ THỜI GIAN VÀ KHÔNG GIAN TƯƠNG TỰ NHƯ CÁC LƯỢT SAU!`;
@@ -3291,7 +3291,9 @@ ${dramaPromptText ? `- GỢI Ý/YÊU CẦU KỊCH TÍNH TỪ NGƯỜI CHƠI (AI 
       gameData?.disableDefaultNpcRelationships || false
     );
 
-    const prompt = `Đây là dữ liệu của lượt chơi này:\n\n${contextStr}\n\nHãy tiến hành BƯỚC 0 (LIỆT KÊ NPC) và BƯỚC 1 (THINKING_PROCESS) sau đó kết xuất BƯỚC 2 (JSON Đầu ra) nhé.`;
+    const prompt = `Đây là dữ liệu của lượt chơi này:\n\n${contextStr}\n\n[LỜI NHẮC CỐT LÕI]:\n1. BẮT BUỘC DUY TRÌ ĐẦY ĐỦ Tháng và Năm trong trường worldTime (Tuyệt đối không cắt bỏ).\n2. KIỂM TRA CHÉO TÊN, TUỔI, NGOẠI HÌNH CỦA TỪNG NPC ĐANG ĐI CÙNG TRONG CẢNH, TUYỆT ĐỐI KHÔNG LẤY RÂU ÔNG NỌ CẮM CẰM BÀ KIA, KHÔNG NHẦM LẪN TUỔI HAY NGOẠI HÌNH CỦA NPC NÀY SANG NPC KHÁC!\n\nHãy tiến hành BƯỚC 0, BƯỚC 1, và BƯỚC 2 theo đúng thứ tự.
+
+[CẢNH BÁO TỐI THƯỢNG]: KÝ TỰ ĐẦU TIÊN TRONG CÂU TRẢ LỜI CỦA BẠN BẮT BUỘC PHẢI LÀ THẺ <npc_list>, KHÔNG ĐƯỢC VIẾT BẤT CỨ CHỮ GÌ KHÁC (kể cả lời chào hay dấu phân cách) TRƯỚC THẺ NÀY!`;
 
     // Thêm tin nhắn tạm thời của AI
     setMessages((prev) => [

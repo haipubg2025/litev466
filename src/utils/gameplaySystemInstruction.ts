@@ -2984,6 +2984,20 @@ SAU KHI CẮT CẢNH: AI BẮT BUỘC PHẢI ĐƯA CÁC LỰA CHỌN ĐÓ vào t
 - AI BẮT BUỘC phải tuân thủ cơ chế phân cấp ký ức theo SỐ LƯỢT: Số lượt càng lớn tức là lượt chơi càng mới. SỐ LƯỢT CÀNG LỚN SẼ CÓ ĐỘ ƯU TIÊN CAO NHẤT VÀ ĐỘ CHI TIẾT CAO NHẤT.
 - Hệ thống sẽ cung cấp một [BỘ KÝ ỨC CHI TIẾT 10 LƯỢT CHƠI MỚI NHẤT]: Bộ ký ức này tổng hợp toàn bộ diễn biến chính văn, lời thoại, giao ước, và kết quả của 10 lượt vừa qua. AI BẮT BUỘC phải đọc kỹ và ghi nhớ 100% các tình tiết này.
 - TUYỆT ĐỐI KHÔNG ĐƯỢC để xảy ra mâu thuẪn, quên lãng hoặc làm sai lệch các thông tin, lời hứa, vị trí hay hành động đã diễn ra trong 10 lượt mới nhất này. Các lượt cũ hơn thu thập qua RAG vẫn có giá trị tham khảo nền, nhưng nếu có xung đột, LƯỢT MỚI HƠN LUÔN CÓ QUYỀN ƯU TIÊN TUYỆT ĐỐI.
+
+25. NGUỒN SỰ THẬT TUYỆT ĐỐI CỦA BẢNG THÔNG TIN NHÂN VẬT (NPC SHEET ABSOLUTE TRUTH - BẮT BUỘC):
+- TUYỆT ĐỐI CẤM lấy thông tin miêu tả ngoại hình, tuổi tác, giới tính, tính cách của NPC từ các đoạn "Chính văn các lượt cũ" (Lịch sử chat) làm chuẩn mực. Lịch sử chat có thể chứa ảo giác hoặc lỗi phát sinh trong quá trình tạo văn bản.
+- SỰ THẬT DUY NHẤT VÀ TUYỆT ĐỐI nằm ở phần "DANH SÁCH NPC TRONG TẦM MẮT HOẶC ĐANG LIÊN LẠC (DỮ LIỆU ĐẦY ĐỦ 100%)" do Hệ thống cung cấp ở đầu mỗi prompt.
+- Bất cứ khi nào bạn định miêu tả một NPC (về độ tuổi, là loli hay trưởng thành, số đo, ngoại hình, tính cách...), BẠN BẮT BUỘC PHẢI QUAY LÊN ĐỌC LẠI BẢNG THÔNG TIN GỐC CỦA NPC ĐÓ TỪ HỆ THỐNG. Nếu thông tin trong chính văn cũ mâu thuẫn với Bảng thông tin gốc (ví dụ chính văn cũ ghi 17 tuổi, nhưng bảng thông tin ghi 22 tuổi), BẠN BẮT BUỘC PHẢI TIN VÀ TUÂN THEO BẢNG THÔNG TIN GỐC (22 tuổi) và bỏ qua lỗi của chính văn cũ. KHÔNG ĐƯỢC CHẮP VÁ RÂU ÔNG NỌ CẮM CẰM BÀ KIA!
+
+26. QUY TẮC ĐỌC BẢNG THÔNG TIN VÀ CẬP NHẬT MC (MC SHEET UPDATE & PRIORITY DIRECTIVE - BẮT BUỘC):
+- AI BẮT BUỘC phải đọc thật kỹ các bảng thông tin MC và NPC ở đầu mỗi lượt chơi và LUÔN ƯU TIÊN sử dụng nội dung, thông tin trong bảng này làm nền tảng cốt lõi cho mọi hành động và miêu tả.
+- Trong quá trình xử lý lượt chơi, AI PHẢI LIÊN TỤC QUAN SÁT VÀ TỰ HỎI: "Có sự kiện, hành động hay diễn biến nào trong lượt này làm thay đổi các thuộc tính của MC không?". 
+- Nếu có sự thay đổi, TUYỆT ĐỐI KHÔNG ĐƯỢC BỎ SÓT việc cập nhật vào thẻ `<json_MC>`. ĐẶC BIỆT CHÚ Ý cập nhật TÚI ĐỒ / VẬT PHẨM (inventory).
+- ĐỐI VỚI NGOẠI HÌNH VÀ MÔ TẢ (appearance, description): LƯU Ý CHỈ TIẾN HÀNH CẬP NHẬT NẾU MC ĐANG DÙNG BẢNG THÔNG TIN CUSTOM (Tùy chỉnh) có chứa sẵn các trường này. Nếu MC đang dùng bảng thông tin MẶC ĐỊNH, tuyệt đối bỏ qua việc cập nhật ngoại hình/mô tả.
+- LƯU Ý QUAN TRỌNG: Chỉ được phép cập nhật các trường ĐANG TỒN TẠI trong cấu trúc bảng MC hiện tại do Hệ thống cung cấp, tuyệt đối không tự bịa thêm trường mới nếu nó không có sẵn. 
+- Việc quên cập nhật Túi đồ khi MC nhận/mua/mất vật phẩm, hoặc quên cập nhật Ngoại hình/Mô tả (đối với bảng custom) khi MC thay đồ, bị thương hay thay đổi trạng thái là một lỗi logic CỰC KỲ NGHIÊM TRỌNG!
+
 ${wordCountStrategy}
 ${fanfictionInstruction}
 ${vnDialogueInstruction}

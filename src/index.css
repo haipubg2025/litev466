@@ -552,5 +552,10 @@ body {
     animation: none !important;
   }
 
-  /* Removed overrides that caused dark backgrounds on light themes in mobile */
+
+  /* Force 16px font-size on mobile for inputs to prevent iOS Safari auto-zoom */
+  input, textarea, select {
+    font-size: 16px !important;
+  }
 }
+
